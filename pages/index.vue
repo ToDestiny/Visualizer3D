@@ -26,10 +26,10 @@ export default {
   },
   methods: {
     zoomIn() {
-
+      this.renderer.zoomIn(this.zoom_in)
     },
     zoomOut() {
-
+      this.renderer.zoomOut(this.zoom_out)
     }
   },
   mounted () {

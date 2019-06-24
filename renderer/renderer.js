@@ -6,6 +6,9 @@ export default class Renderer {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
+        this.width = 600 // window.innerWidth
+        this.height = 400 // window.innerHeight
+        this.viewAngle = 75
         const loader = new GLTFLoader()
         console.log('Loading scene')
         loader.load('/t-shirt2/scene.gltf', (gltf) => {
@@ -68,13 +71,37 @@ export default class Renderer {
         else
             this.previousMousePosition = null
     }
-    initThree (model) {
-        const width = 600 // window.innerWidth
-        const height = 400 // window.innerHeight
-        const viewAngle = 75
-        const camera = new THREE.PerspectiveCamera(viewAngle, width/height, 0.1, 9999)
+    zoomIn(val) {
+        if (val > 0)
+        {
+            this.viewAngle -= val
+            if (this.viewAngle < 30)
+                this.viewAngle = 30
+            this.render()
+        }
+    }
+    zoomOut(val) {
+        if (val > 0)
+        {
+            this.viewAngle += val
+            console.log(this.viewAngle)
+            if (this.viewAngle > 80)
+                this.viewAngle = 80
+            this.render()
+        }
+    }
+    render() {
+        this.initCamera()
+        this.renderer.render(this.scene, this.camera)
+    }
+    initCamera() {
+        const camera = new THREE.PerspectiveCamera(this.viewAngle,
+            this.width/this.height, 0.1, 9999)
         camera.position.z = 3
         camera.lookAt(new THREE.Vector3(0, 0, 0))
+        this.camera = camera
+    }
+    initThree (model) {
         const renderer = new THREE.WebGLRenderer({antialias: true})
         renderer.setClearColor(0xFFFFFF)
         const scene = new THREE.Scene()
@@ -85,7 +112,7 @@ export default class Renderer {
         scene.add(light)
         const ambientLight = new THREE.AmbientLight(0x888888)
         scene.add(ambientLight)
-        renderer.setSize(width, height)
+        renderer.setSize(this.width, this.height)
         this.container.appendChild(renderer.domElement)
         renderer.domElement.onmousedown = this.draggingModeOn.bind(this)
         renderer.domElement.onmouseup = this.draggingModeOff.bind(this)
@@ -93,8 +120,7 @@ export default class Renderer {
         renderer.domElement.onmouseleave = this.draggingModeOff.bind(this)
         this.renderer = renderer
         this.scene = scene
-        this.camera = camera
         this.model = model
-        renderer.render(scene, camera)
+        this.render()
     }
 }
