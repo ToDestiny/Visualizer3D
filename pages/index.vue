@@ -14,6 +14,7 @@
 <script>
 import * as THREE from 'three'
 import GLTFLoader from 'three-gltf-loader'
+// import ARender from '../render/file.js'
 
 export default {
   data () {
