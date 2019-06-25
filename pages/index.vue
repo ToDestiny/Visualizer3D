@@ -7,6 +7,7 @@
       <div id="controllers" ref="controllers">
         <input v-model.number="zoom_in" type="number"/> <button @click="zoomIn">Zoom IN</button><br />
         <input v-model.number="zoom_out" type="number"/><button @click="zoomOut">zoom OUT</button>
+        <button @click="toggleDragMode">Toggle Drag Mode</button>
       </div>
       <div ref="rendererContainer">
       </div>
@@ -30,6 +31,9 @@ export default {
     },
     zoomOut() {
       this.renderer.zoomOut(this.zoom_out)
+    },
+    toggleDragMode() {
+      this.renderer.toggleMouseMode()
     }
   },
   mounted () {
