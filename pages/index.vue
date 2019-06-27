@@ -123,7 +123,9 @@ export default {
       // here
       // uuid is uuid lol
       // data of the image is : this.imagesList[uuid] (base64 encoded URL)
-      this.imagesList[ky] = null
+      const imagesList = { ...this.imagesList }
+      delete imagesList[uuid]
+      this.imagesList = imagesList
     }
   },
   mounted () {
