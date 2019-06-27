@@ -14,10 +14,10 @@
 
             <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
                 <p v-if="images.length == 0">Click in this box for select images OR drop your files</p>
-                <div class="image_up" v-for="(img, indx) of images" :key="indx">
-                    <img :src="imagesData[indx]" alt="** Preview **" :ref="'img_' + indx" height="128" width="128"/><br />
-                    {{ img.name.substring(0, 13) }}
-                    <button @click="deleteImage">delete</button>
+                <div class="image_up" v-for="(img, ky) in imagesList" :key="ky">
+                    <img :src="img.data" alt="** Preview **" :ref="'img_' + ky" height="128" width="128"/><br />
+                    {{ ky.substring(0, 13) }}
+                    <button @click.prevent.stop="deleteImage(ky)">delete</button>
                 </div>
             </div>
             <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
@@ -71,11 +71,6 @@ export default {
     onDrop (ev) {
         ev.preventDefault()
         this.addFiles(ev.dataTransfer.files)
-
-        /*this.$nextTick(function () {
-            self.imagesData.push('')
-            self.imagesData.pop()
-        })*/
     },
     onDragHandler (ev) {
         console.log('drag', ev)
@@ -97,13 +92,15 @@ export default {
 
         let i = 0;
         for (let fl of files) {
+            const uuid = uuidv4()
             fl.i = i
             fl.count = count
 
             var reader = new FileReader();
-            reader.onload = function (e) {
-                self.imagesData[fl.count] = e.target.result
-                self.images.push(fl)
+            reader.onload = (e) => {
+                this.imagesData[fl.count] = e.target.result
+                this.images.push(fl)
+                this.imagesList[uuid] = { file: fl, data: e.target.result }
             };
             reader.readAsDataURL(fl);
 
@@ -111,12 +108,23 @@ export default {
             count++
         }
 
+        console.log(this.imagesList)
+
         this.filesCount = count
     },
 
     startUpload() {
-      this.$store.dispatch('statics/upload', this.img_file)
+
     },
+
+    deleteImage(uuid) {
+      console.log('delete ', uuid)
+      // here call your function to delete in threejs
+      // here
+      // uuid is uuid lol
+      // data of the image is : this.imagesList[uuid] (base64 encoded URL)
+      this.imagesList[ky] = null
+    }
   },
   mounted () {
     this.renderer = new Renderer(this.$refs.rendererContainer)
