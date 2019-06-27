@@ -9,6 +9,22 @@
         <input v-model.number="zoom_out" type="number"/><button @click="zoomOut">zoom OUT</button>
         <button @click="toggleDragMode">Toggle Drag Mode</button>
       </div>
+      <div id="images" ref="images">
+        <div class="pl-lg-4 dz-container">
+
+            <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
+                <p v-if="images.length == 0">Click in this box for select images OR drop your files</p>
+                <div class="image_up" v-for="(img, indx) of images" :key="indx">
+                    <img :src="imagesData[indx]" alt="** Preview **" :ref="'img_' + indx" height="128" width="128"/><br />
+                    {{ img.name.substring(0, 13) }}
+                    <button @click="deleteImage">delete</button>
+                </div>
+            </div>
+            <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
+
+        </div>
+        <hr class="my-4" />
+      </div>
       <div ref="rendererContainer">
       </div>
     </div>
@@ -18,26 +34,107 @@
 <script>
 import Renderer from '../renderer/renderer.js'
 
+function uuidv4() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 export default {
   data () {
     return {
       zoom_in: 1,
       zoom_out: 1,
+      renderer: null,
+
+      img_file: null,
+      images: [],
+      imagesData: [],
+      filesCount: 0,
+      imagesList: {},
     }
   },
   methods: {
     zoomIn() {
-      this.renderer.zoomIn(this.zoom_in)
+      console.log(this.renderer)
+      //this.renderer.zoomIn(this.zoom_in)
     },
     zoomOut() {
-      this.renderer.zoomOut(this.zoom_out)
+      console.log(this.renderer)
+      //this.renderer.zoomOut(this.zoom_out)
     },
     toggleDragMode() {
       this.renderer.toggleMouseMode()
-    }
+    },
+
+    onDrop (ev) {
+        ev.preventDefault()
+        this.addFiles(ev.dataTransfer.files)
+
+        /*this.$nextTick(function () {
+            self.imagesData.push('')
+            self.imagesData.pop()
+        })*/
+    },
+    onDragHandler (ev) {
+        console.log('drag', ev)
+        ev.preventDefault()
+    },
+    newTmpFile (ev) {
+        console.log(ev)
+        console.log(this.$refs.tmpFile.files)
+        this.addFiles(this.$refs.tmpFile.files)
+    },
+    clickOnTmpFile () {
+        this.$refs.tmpFile.click()
+    },
+    addFiles (files) {
+        const images = this.images
+        let count = this.filesCount
+
+        const self = this
+
+        let i = 0;
+        for (let fl of files) {
+            fl.i = i
+            fl.count = count
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                self.imagesData[fl.count] = e.target.result
+                self.images.push(fl)
+            };
+            reader.readAsDataURL(fl);
+
+            i++
+            count++
+        }
+
+        this.filesCount = count
+    },
+
+    startUpload() {
+      this.$store.dispatch('statics/upload', this.img_file)
+    },
   },
   mounted () {
     this.renderer = new Renderer(this.$refs.rendererContainer)
+    console.log(uuidv4())
   }
 }
 </script>
+
+<style>
+#dz {
+    background-color: rgb(219, 219, 219);
+    border-radius: 20px 20px 20px 20px;
+    padding-bottom: 25px;
+    padding-top: 25px;
+    height: 100%px;
+}
+.image_up {
+    height: 128px;
+    width: 128px;
+}
+</style>
