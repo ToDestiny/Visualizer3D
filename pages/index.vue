@@ -11,7 +11,7 @@
       </div>
       <div id="images" ref="images">
         <div class="pl-lg-4 dz-container">
-
+            <canvas id="c" width="600" height="600"></canvas>
             <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
                 <p v-if="images.length == 0">Click in this box for select images OR drop your files</p>
                 <div class="image_up" v-for="(img, ky) in imagesList" :key="ky">
@@ -99,6 +99,7 @@ export default {
             var reader = new FileReader();
             reader.onload = (e) => {
                 this.imagesData[fl.count] = e.target.result
+                this.renderer.addLogo(e.target.result)
                 this.images.push(fl)
                 this.imagesList[uuid] = { file: fl, data: e.target.result }
             };

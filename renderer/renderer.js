@@ -1,13 +1,56 @@
 import * as THREE from 'three'
-import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import GLTFLoader from 'three-gltf-loader'
+import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
+import { fabric } from 'fabric'
 
 function to_radians(angle) {
     return angle * 2 * Math.PI / 360.0
 }
 
 export default class Renderer {
+    renderModelCanvas(model) {
+        model.canvas.renderAll()
+        model.canvas_texture.needsUpdate = true
+    }
+    setupModel(model, name, index) {
+        const factor = 1
+        let canvas = new fabric.Canvas(name + '_canvas', {width: 2048, height: 2048})
+        let canvas_texture = new THREE.Texture(canvas.getElement())
+        canvas.add(new fabric.Rect({width: 2048, height: 2048, fill: 'blue'}))
+        this.renderModelCanvas({canvas, canvas_texture})
+        /*fabric.Image.fromURL(
+            't-shirt2/textures/material_baseColor.jpeg',
+            (img) => {
+                canvas.add(img)
+                this.renderModelCanvas({canvas, canvas_texture})
+            }
+        )*/
+        let material = new THREE.MeshPhongMaterial({color: 0xffffff,
+            map: canvas_texture,
+            side: THREE.DoubleSide})
+
+        model.scale.x = factor
+        model.scale.y = factor
+        model.scale.z = factor
+        model.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                //child.name = model_info.name
+                child.material = material
+                model.position.y = -0.25
+            }
+        })
+        this.models[index] = {model: model, canvas: canvas, canvas_texture: canvas_texture}
+        this.scene.add(model)
+    }
+    loadModel(model_info, index) {
+        let obj_loader = new OBJLoader2()
+        obj_loader.load(model_info.filename,
+            (model) => this.setupModel(model, model_info.name, index),
+            null,
+            (err) => {console.error(err)},
+            null, false
+        )
+    }
     constructor(container) {
         this.container = container
         this.rotation_y = 0
@@ -15,49 +58,24 @@ export default class Renderer {
         this.width = 800 // window.innerWidth
         this.height = 600 // window.innerHeight
         this.view_angle = 75
-        this.moved = false
-        this.intersection = {
+        /*this.intersection = {
             intersects: false,
             object: null,
             point: new THREE.Vector3(),
             normal: new THREE.Vector3(),
-        }
-        this.mouse_helper = new THREE.Mesh(new THREE.BoxBufferGeometry(0.05, 0.05, 0.8),
-            new THREE.MeshBasicMaterial({color: 0xff0000}))
-        this.mouse_helper.visible = true
-        this.decals = []
-        const loader = new GLTFLoader()
+        }*/
+        this.initThree()
         console.log('Loading scene')
-        loader.load('/t-shirt2/scene.gltf', (gltf) => {
-            console.log('Scene loaded')
-            const model = gltf.scene
-            const factor = 0.05
-            model.scale.x = factor
-            model.scale.y = factor
-            model.scale.z = factor
-            model.traverse((child) => {
-                if (child instanceof THREE.Mesh) {
-                    child.position.y = -25
-                }
-            })
-            this.initThree(gltf.scene)
-            },
-            (xhr) => {},
-            (error) => {
-                console.error('Error while loading scene file', error)
-            }
-        )
+        this.models_info = [
+            {filename: "t-shirt-uv/back.obj", name: "back"},
+            {filename: "t-shirt-uv/front.obj", name: "front"},
+            {filename: "t-shirt-uv/sleeve_left.obj", name: "sleeve_left"},
+            {filename: "t-shirt-uv/sleeve_right.obj", name: "sleeve_right"}
+        ]
+        this.models = []
+        this.models_info.forEach(this.loadModel, this)
     }
-    mouseDown () {
-        this.moved = false
-    }
-    mouseUp () {
-        if (!this.moved)
-            this.shoot()
-    }
-    mouseLeave () {
-    }
-    mouseMove (e) {
+    /*mouseMove (e) {
         this.mouse_position = {
             x: e.offsetX,
             y: e.offsetY,
@@ -86,39 +104,18 @@ export default class Renderer {
         }
         else
             this.intersection.intersects = false
-    }
-    shoot() {
-        if (this.intersection.intersects) {
-            const placeholder_size = new THREE.Vector3(0.5, 0.5, 1)
-            var orientation = (new THREE.Euler()).copy(this.mouse_helper.rotation)
-            var point = (new THREE.Vector3()).copy(this.intersection.point)
+    }*/
+    addLogo() {
 
-            var decal_geom = new DecalGeometry(this.intersection.object,
-                point, orientation, placeholder_size)
-            var decal = new THREE.Mesh(decal_geom, new THREE.MeshBasicMaterial({
-                map: this.texture_loader.load('/t-shirt_workshop/textures/hanger_maple_baseColor.jpeg'),
-                transparent: true,
-                depthTest: true,
-                depthWrite: false,
-                polygonOffset: true,
-                polygonOffsetFactor: - 4
-            }))
-            this.decals.push(decal)
-            this.scene.add(decal)
-        }
     }
     initThree(model) {
         const scene = new THREE.Scene()
 
-        /*const lightIntensity = 0.5 // increase if too dark
-        const light = new THREE.PointLight(0xFFFFFF, lightIntensity, 100, 0)
-        light.position.set(1, 1, 3)*/
         const light = new THREE.AmbientLight(0xdddddd)
-
-        const raycaster = new THREE.Raycaster();
+        //const raycaster = new THREE.Raycaster();
 
         const renderer = new THREE.WebGLRenderer({antialias: true})
-        renderer.setClearColor(0xFFFFFF)
+        renderer.setClearColor(0xFCFCFC)
         this.container.appendChild(renderer.domElement)
         renderer.setSize(this.width, this.height)
 
@@ -128,34 +125,21 @@ export default class Renderer {
         const controls = new OrbitControls(camera, renderer.domElement)
         controls.minDistance = 1.5
         controls.maxDistance = 10
-        controls.maxPolarAngle = to_radians(90 + 40)
-        controls.minPolarAngle = to_radians(90 - 40)
+        controls.maxPolarAngle = to_radians(90 + 20)
+        controls.minPolarAngle = to_radians(90 - 20)
         controls.enableKeys = false
         controls.enablePan = false
-
         controls.addEventListener('change', function () {
             this.moved = true
         }.bind(this))
-        renderer.domElement.addEventListener('mousedown', this.mouseDown.bind(this))
-        renderer.domElement.addEventListener('mouseup', this.mouseUp.bind(this))
-        renderer.domElement.addEventListener('mousemove', this.mouseMove.bind(this))
-        renderer.domElement.addEventListener('mouseleave', this.mouseLeave.bind(this))
 
         this.texture_loader = new THREE.TextureLoader()
         this.camera = camera
         this.renderer = renderer
         this.scene = scene
-        this.model = model
         this.light = light
-        this.raycaster = raycaster
-        this.distance = 3
-        scene.add(this.model)
+        //this.raycaster = raycaster
         scene.add(this.light)
-        scene.add(this.mouse_helper)
-        /*var geometry =  new THREE.DecalGeometry(this.model, , orientation, size );
-        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        var mesh = new THREE.Mesh( geometry, material );
-        scene.add(geometry*/
         this.renderLoop()
     }
     renderLoop() {
