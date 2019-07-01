@@ -99,6 +99,7 @@ export default {
             };
             reader.readAsDataURL(fl);
         }
+        this.$refs.tmpFile.value = ""
     },
 
     startUpload() {
@@ -111,9 +112,10 @@ export default {
       // here
       // uuid is uuid lol
       // data of the image is : this.imagesList[uuid] (base64 encoded URL)
-      this.renderer.removeLogo(this.images[uuid])
+      this.renderer.removeLogo(uuid)
       delete this.images[uuid]
       this.image_count = Object.keys(this.images).length
+      console.log(this.$refs.tmpFile.value)
     }
   },
   mounted () {
