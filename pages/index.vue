@@ -48,10 +48,8 @@ export default {
       renderer: null,
 
       img_file: null,
-      images: [],
-      imagesData: [],
-      filesCount: 0,
-      imagesList: {},
+      images: {},
+      imagesList: {}
     }
   },
   methods: {
@@ -72,12 +70,12 @@ export default {
         this.addFiles(ev.dataTransfer.files)
     },
     onDragHandler (ev) {
-        console.log('drag', ev)
+        //console.log('drag', ev)
         ev.preventDefault()
     },
     newTmpFile (ev) {
-        console.log(ev)
-        console.log(this.$refs.tmpFile.files)
+        //console.log(ev)
+        //console.log(this.$refs.tmpFile.files)
         this.addFiles(this.$refs.tmpFile.files)
     },
     clickOnTmpFile () {
@@ -85,32 +83,23 @@ export default {
     },
     addFiles (files) {
         const images = this.images
-        let count = this.filesCount
-
-        const self = this
 
         let i = 0;
         for (let fl of files) {
             const uuid = uuidv4()
-            fl.i = i
-            fl.count = count
 
             var reader = new FileReader();
             reader.onload = (e) => {
-                this.imagesData[fl.count] = e.target.result
-                this.renderer.addLogo(e.target.result)
-                this.images.push(fl)
+                this.images[uuid] = {
+                  file: fl,
+                  data: e.target.result
+                }
                 this.imagesList[uuid] = { file: fl, data: e.target.result }
+                this.renderer.addFixedLogo(0, e.target.result)
             };
             reader.readAsDataURL(fl);
-
-            i++
-            count++
         }
-
-        console.log(this.imagesList)
-
-        this.filesCount = count
+        //console.log(this.images)
     },
 
     startUpload() {
@@ -129,9 +118,12 @@ export default {
     }
   },
   mounted () {
-    this.renderer = new Renderer(this.$refs.rendererContainer)
+    if (!this.renderer)
+      this.renderer = new Renderer(this.$refs.rendererContainer)
+    else
+      console.log("keeping renderer")
     console.log(uuidv4())
-  }
+  },
 }
 </script>
 

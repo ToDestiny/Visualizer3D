@@ -29,19 +29,22 @@ export default class Renderer {
         )*/
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
+            shininess: 1,
             side: THREE.DoubleSide})
+        let mesh
 
         model.scale.x = factor
         model.scale.y = factor
         model.scale.z = factor
         model.traverse((child) => {
             if (child instanceof THREE.Mesh) {
-                //child.name = model_info.name
+                mesh = child
+                child.name = name
                 child.material = material
                 model.position.y = -0.25
             }
         })
-        this.models[index] = {model: model, canvas: canvas, canvas_texture: canvas_texture}
+        this.models[index] = {mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
         this.scene.add(model)
     }
     loadModel(model_info, index) {
@@ -101,7 +104,7 @@ export default class Renderer {
         this.rotation_x = 0
         this.width = 800 // window.innerWidth
         this.height = 600 // window.innerHeight
-        this.view_angle = 7
+        this.view_angle = 75
         this.initThree()
         console.log('Loading scene')
         this.models_info = [
@@ -147,25 +150,24 @@ export default class Renderer {
     logoPositionToSpecs(position) {
         /* TODO */
         return {
-            model: this.models.find((model) => model.name == "front"),
+            model: this.models.find((model) => model.mesh.name == "front"),
             width: 500,
-            height: 500,
-            top: 1024,
-            left: 1024
+            top: 450,
+            left: 450
         }
     }
     addFixedLogo(position, image_url) {
-        let specs = this.logoPositionToModel(position)
+        let specs = this.logoPositionToSpecs(position)
+        console.log(this.models)
         if (position in this.fixed_logos)
             specs.model.canvas.remove(this.fixed_logos[position])
         fabric.Image.fromURL(image_url, (image) => {
             image.scaleToWidth(specs.width)
-            image.scaleToHeight(specs.height)
             image.top = specs.top
             image.left = specs.left
             this.fixed_logos[position] = image
             specs.model.canvas.add(image)
-            this.renderModelCanvas(model)
+            this.renderModelCanvas(specs.model)
         })
     }
     renderLoop() {
