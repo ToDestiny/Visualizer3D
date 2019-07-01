@@ -94,7 +94,7 @@ export default {
                   file: fl,
                   data: e.target.result
                 }
-                this.renderer.addFixedLogo(0, e.target.result, uuid)
+                this.renderer.addFixedLogo(e.target.result, uuid, 0)
                 this.image_count = Object.keys(this.images).length
             };
             reader.readAsDataURL(fl);
