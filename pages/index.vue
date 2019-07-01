@@ -11,7 +11,6 @@
       </div>
       <div id="images" ref="images">
         <div class="pl-lg-4 dz-container">
-            <canvas id="c" width="600" height="600"></canvas>
             <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
                 <p v-if="images.length == 0">Click in this box for select images OR drop your files</p>
                 <div class="image_up" v-for="(img, ky) in imagesList" :key="ky">
