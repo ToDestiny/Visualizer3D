@@ -16,6 +16,7 @@
                 <div class="image_up" v-for="(img_info, uuid) in images" :key="uuid">
                     <img :src="img_info.data" alt="** Preview **" :ref="'img_' + uuid" height="128" width="128"/><br />
                     {{ img_info.file.name.substring(0, 13) }}
+                    <input v-model.number="img_info.new_position" type="number"/><button @click.prevent.stop="moveLogo(uuid, img_info.new_position)">Move</button>
                     <button @click.prevent.stop="deleteImage(uuid)">delete</button>
                 </div>
             </div>
@@ -92,14 +93,26 @@ export default {
             reader.onload = (e) => {
                 this.images[uuid] = {
                   file: fl,
-                  data: e.target.result
+                  data: e.target.result,
+                  position: 0,
+                  new_position: 0
                 }
-                this.renderer.addFixedLogo(e.target.result, uuid, 0)
+                this.renderer.addFixedLogo(
+                  this.images[uuid].data,
+                  uuid,
+                  this.images[uuid].position
+                )
                 this.image_count = Object.keys(this.images).length
             };
             reader.readAsDataURL(fl);
         }
         this.$refs.tmpFile.value = ""
+    },
+    moveLogo (uuid) {
+      this.images[uuid].position = this.images[uuid].new_position
+      this.renderer.addFixedLogo(this.images[uuid].data,
+        uuid,
+        this.images[uuid].position)
     },
 
     startUpload() {

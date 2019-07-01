@@ -148,13 +148,42 @@ export default class Renderer {
             this.intersection.intersects = false
     }*/
     logoPositionToSpecs(position) {
-        /* TODO */
-        return {
-            model: this.models.find((model) => model.mesh.name == "front"),
-            width: 500,
-            top: 450,
-            left: 450
+        let specs
+        if (position == 0) {
+            specs = {
+                model: this.models.find((model) => model.mesh.name == "front"),
+                width: 500,
+                top: 450,
+                left: 450
+            }
         }
+        else if (position == 1) {
+            specs = {
+                model: this.models.find((model) => model.mesh.name == "front"),
+                width: 200,
+                top: 520,
+                left: 520
+            }
+        }
+        else if (position == 2) {
+            specs = {
+                model: this.models.find((model) => model.mesh.name == "front"),
+                width: 500,
+                top: 1300,
+                left: 1100
+            }
+        }
+        else if (position == 3) {
+            specs = {
+                model: this.models.find((model) => model.mesh.name == "front"),
+                width: 200,
+                top: 1450,
+                left: 1250
+            }
+        }
+        else
+            throw("Position specified does not exist")
+        return specs
     }
     addFixedLogo(image_url, uuid, position) {
         if (uuid in this.fixed_logos) {
