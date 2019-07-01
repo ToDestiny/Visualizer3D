@@ -156,19 +156,35 @@ export default class Renderer {
             left: 450
         }
     }
-    addFixedLogo(position, image_url) {
+    addFixedLogo(position, image_url, uuid) {
+        if (position in this.fixed_logos) {
+            this.fixed_logos[position].canvas.remove(this.fixed_logos[position].image)
+            this.renderModelCanvas(this.fixed_logos[position].model)
+        }
         let specs = this.logoPositionToSpecs(position)
-        console.log(this.models)
-        if (position in this.fixed_logos)
-            specs.model.canvas.remove(this.fixed_logos[position])
         fabric.Image.fromURL(image_url, (image) => {
             image.scaleToWidth(specs.width)
             image.top = specs.top
             image.left = specs.left
-            this.fixed_logos[position] = image
+            this.fixed_logos[position] = {
+                image: image,
+                canvas: specs.model.canvas,
+                model: specs.model,
+                uuid: uuid,
+                position: position
+            }
             specs.model.canvas.add(image)
             this.renderModelCanvas(specs.model)
         })
+    }
+    removeLogo(uuid) {
+        /* TODO non fixed logo */
+        let fixed_logo = Object.values(this.fixed_logos).find((logo) => logo.uuid == uuid)
+        if (fixed_logo) {
+            fixed_logo.canvas.remove(fixed_logo.image)
+            this.renderModelCanvas(fixed_logo.model)
+            delete this.fixed_logos[fixed_logo.position]
+        }
     }
     renderLoop() {
         window.requestAnimationFrame(this.renderLoop.bind(this))

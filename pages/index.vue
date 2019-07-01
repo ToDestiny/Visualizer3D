@@ -12,11 +12,11 @@
       <div id="images" ref="images">
         <div class="pl-lg-4 dz-container">
             <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
-                <p v-if="images.length == 0">Click in this box for select images OR drop your files</p>
-                <div class="image_up" v-for="(img, ky) in imagesList" :key="ky">
-                    <img :src="img.data" alt="** Preview **" :ref="'img_' + ky" height="128" width="128"/><br />
-                    {{ ky.substring(0, 13) }}
-                    <button @click.prevent.stop="deleteImage(ky)">delete</button>
+                <p v-if="image_count == 0">Click in this box for select images OR drop your files</p>
+                <div class="image_up" v-for="(img_info, uuid) in images" :key="uuid">
+                    <img :src="img_info.data" alt="** Preview **" :ref="'img_' + uuid" height="128" width="128"/><br />
+                    {{ img_info.file.name.substring(0, 13) }}
+                    <button @click.prevent.stop="deleteImage(uuid)">delete</button>
                 </div>
             </div>
             <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
@@ -49,7 +49,7 @@ export default {
 
       img_file: null,
       images: {},
-      imagesList: {}
+      image_count: 0
     }
   },
   methods: {
@@ -94,12 +94,11 @@ export default {
                   file: fl,
                   data: e.target.result
                 }
-                this.imagesList[uuid] = { file: fl, data: e.target.result }
-                this.renderer.addFixedLogo(0, e.target.result)
+                this.renderer.addFixedLogo(0, e.target.result, uuid)
+                this.image_count = Object.keys(this.images).length
             };
             reader.readAsDataURL(fl);
         }
-        //console.log(this.images)
     },
 
     startUpload() {
@@ -112,9 +111,9 @@ export default {
       // here
       // uuid is uuid lol
       // data of the image is : this.imagesList[uuid] (base64 encoded URL)
-      const imagesList = { ...this.imagesList }
-      delete imagesList[uuid]
-      this.imagesList = imagesList
+      this.renderer.removeLogo(this.images[uuid])
+      delete this.images[uuid]
+      this.image_count = Object.keys(this.images).length
     }
   },
   mounted () {
