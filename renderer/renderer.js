@@ -117,72 +117,46 @@ export default class Renderer {
         this.models_info.forEach(this.loadModel, this)
         this.fixed_logos = {}
     }
-    /*mouseMove (e) {
-        this.mouse_position = {
-            x: e.offsetX,
-            y: e.offsetY,
-        }
-        this.mouse_coords = {
-            x: (this.mouse_position.x / this.renderer.domElement.width) * 2 - 1,
-            y: - (this.mouse_position.y / this.renderer.domElement.height) * 2 + 1
-        }
-        this.getImpact()
-        // console.log(this.mouse_coords)
-    }
-    getImpact() {
-        this.raycaster.setFromCamera(this.mouse_coords, this.camera)
-        var raycast = this.raycaster.intersectObjects([this.model], true)
-        if (raycast && raycast.length) {
-            this.intersection.intersects = true
-            this.intersection.object = raycast[0].object
-            this.intersection.point.copy(raycast[0].point)
-            var normal = raycast[0].face.normal.clone()
-            normal.transformDirection(this.intersection.object.matrixWorld)
-            normal.multiplyScalar(10)
-            normal.add(this.intersection.point)
-            this.intersection.normal = normal
-            this.mouse_helper.position.copy(this.intersection.point)
-            this.mouse_helper.lookAt(this.intersection.normal)
-        }
-        else
-            this.intersection.intersects = false
-    }*/
-    logoPositionToSpecs(position) {
-        let specs
-        if (position == 0) {
-            specs = {
-                model: this.models.find((model) => model.mesh.name == "front"),
+    getFixedPositions() {
+        return [
+            {
+                name: "Top left large",
+                part: "front",
                 width: 500,
                 top: 450,
                 left: 450
-            }
-        }
-        else if (position == 1) {
-            specs = {
-                model: this.models.find((model) => model.mesh.name == "front"),
+            },
+            {
+                name: "Top left small",
+                part: "front",
                 width: 200,
                 top: 520,
                 left: 520
-            }
-        }
-        else if (position == 2) {
-            specs = {
-                model: this.models.find((model) => model.mesh.name == "front"),
+            },
+            {
+                name: "Bottom right large",
+                part: "front",
                 width: 500,
                 top: 1300,
                 left: 1100
-            }
-        }
-        else if (position == 3) {
-            specs = {
-                model: this.models.find((model) => model.mesh.name == "front"),
+            },
+            {
+                name: "Bottom right small",
+                part: "front",
                 width: 200,
                 top: 1450,
                 left: 1250
             }
+        ]
+    }
+    logoPositionToSpecs(position) {
+        let config = (this.getFixedPositions())[position]
+        let specs = {
+            model: this.models.find((model) => model.mesh.name == config.part),
+            width: config.width,
+            top: config.top,
+            left: config.left
         }
-        else
-            throw("Position specified does not exist")
         return specs
     }
     addFixedLogo(image_url, uuid, position) {

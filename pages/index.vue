@@ -4,20 +4,24 @@
       <h1 class="title">
         Test BLK
       </h1>
-      <div id="controllers" ref="controllers">
-        <input v-model.number="zoom_in" type="number"/> <button @click="zoomIn">Zoom IN</button><br />
-        <input v-model.number="zoom_out" type="number"/><button @click="zoomOut">zoom OUT</button>
-        <button @click="toggleDragMode">Toggle Drag Mode</button>
-      </div>
       <div id="images" ref="images">
         <div class="pl-lg-4 dz-container">
-            <div class="mt-3 mb-3 d-flex flex-row justify-content-around" id="dz" @drop="onDrop" @dragover="onDragHandler" @click="clickOnTmpFile">
-                <p v-if="image_count == 0">Click in this box for select images OR drop your files</p>
+            <div class="mt-3 mb-3 d-flex flex-row justify-content-start" id="dz" @drop="onDrop" @dragover="onDragHandler">
+                <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
+                <p v-if="image_count == 0">Drag your logos here</p>
                 <div class="image_up" v-for="(img_info, uuid) in images" :key="uuid">
-                    <img :src="img_info.data" alt="** Preview **" :ref="'img_' + uuid" height="128" width="128"/><br />
-                    {{ img_info.file.name.substring(0, 13) }}
-                    <input v-model.number="img_info.new_position" type="number"/><button @click.prevent.stop="moveLogo(uuid, img_info.new_position)">Move</button>
-                    <button @click.prevent.stop="deleteImage(uuid)">delete</button>
+                    <img :src="img_info.data" alt="** Preview **" :ref="'img_' + uuid" height="65" width="65"/><br />
+                    <div>
+                      {{ img_info.file.name.substring(0, 13) }}
+                    </div>
+                    <select v-model.number="img_info.new_position" @change="moveLogo(uuid)">
+                      <option v-for="(pos, index) in fixed_positions" v-bind:value="index">
+                        {{ pos.name }}
+                      </option>
+                    </select>
+                    <button @click.prevent.stop="deleteImage(uuid)">
+                      <font-awesome-icon icon="window-close"/>
+                    </button>
                 </div>
             </div>
             <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
@@ -32,7 +36,13 @@
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Renderer from '../renderer/renderer.js'
+
+library.add(faPlusSquare)
+library.add(faWindowClose)
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -42,6 +52,10 @@ function uuidv4() {
 }
 
 export default {
+  name: "App",
+  components: {
+    FontAwesomeIcon
+  },
   data () {
     return {
       zoom_in: 1,
@@ -50,22 +64,11 @@ export default {
 
       img_file: null,
       images: {},
-      image_count: 0
+      image_count: 0,
+      fixed_positions: []
     }
   },
   methods: {
-    zoomIn() {
-      console.log(this.renderer)
-      //this.renderer.zoomIn(this.zoom_in)
-    },
-    zoomOut() {
-      console.log(this.renderer)
-      //this.renderer.zoomOut(this.zoom_out)
-    },
-    toggleDragMode() {
-      this.renderer.toggleMouseMode()
-    },
-
     onDrop (ev) {
         ev.preventDefault()
         this.addFiles(ev.dataTransfer.files)
@@ -128,7 +131,6 @@ export default {
       this.renderer.removeLogo(uuid)
       delete this.images[uuid]
       this.image_count = Object.keys(this.images).length
-      console.log(this.$refs.tmpFile.value)
     }
   },
   mounted () {
@@ -136,7 +138,9 @@ export default {
       this.renderer = new Renderer(this.$refs.rendererContainer)
     else
       console.log("keeping renderer")
-    console.log(uuidv4())
+    // TO UPDATE EVERYTIME MODEL CHANGES
+    this.fixed_positions = this.renderer.getFixedPositions()
+    console.log(this.fixed_positions)
   },
 }
 </script>

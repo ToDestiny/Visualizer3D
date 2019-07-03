@@ -52,4 +52,9 @@ html {
   color: #fff;
   background-color: #35495e;
 }
+
+.flex-row * {
+  margin: 0 0.5em;
+}
+
 </style>
