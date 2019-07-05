@@ -1,0 +1,60 @@
+{
+    "name": "t-shirt",
+    "version": "0.01",
+    "parts": [
+        {
+            "name": "front",
+            "obj_file": "t-shirt/front.obj",
+            "color_map": null,
+            "normal_map": null
+        },
+        {
+            "name": "back",
+            "obj_file": "t-shirt/back.obj",
+            "color_map": null,
+            "normal_map": null
+        },
+        {
+            "name": "sleeve_left",
+            "obj_file": "t-shirt/sleeve_left.obj",
+            "color_map": null,
+            "normal_map": null
+        },
+        {
+            "name": "sleeve_right",
+            "obj_file": "t-shirt/sleeve_right.obj",
+            "color_map": null,
+             "normal_map": null
+        }
+    ],
+    "fixed_logos": [
+        {
+            "name": "Top left large",
+            "part": "front",
+            "width": 500,
+            "top": 450,
+            "left": 450
+        },
+        {
+            "name": "Top left small",
+            "part": "front",
+            "width": 200,
+            "top": 520,
+            "left": 520
+        },
+        {
+            "name": "Bottom right large",
+            "part": "front",
+            "width": 500,
+            "top": 1300,
+            "left": 1100
+        },
+        {
+            "name": "Bottom right small",
+            "part": "front",
+            "width": 200,
+            "top": 1450,
+            "left": 1250
+        }
+    ]
+}

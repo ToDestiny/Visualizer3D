@@ -12,45 +12,46 @@ export default class Renderer {
         model.canvas.renderAll()
         model.canvas_texture.needsUpdate = true
     }
-    setupModel(model, name, index) {
+    setupModel(part, part_info, index) {
         const factor = 1
+        let name = part_info.name
         let canvas = new fabric.Canvas(name + '_canvas', {width: 2048, height: 2048})
         let canvas_texture = new THREE.Texture(canvas.getElement())
         canvas.add(new fabric.Rect({width: 2048, height: 2048, fill: 'grey'}))
+        if (part_info.color_map) {
+            fabric.Image.fromURL(
+                part_info.color_map,
+                (img) => {
+                    img.scaleToWidth(2048)
+                    canvas.add(img)
+                    this.renderModelCanvas({canvas, canvas_texture})
+                }
+            )
+        }
         this.renderModelCanvas({canvas, canvas_texture})
-        /*fabric.Image.fromURL(
-            't-shirt2/textures/material_baseColor.jpeg',
-            (img) => {
-                img.scaleToWidth(2048)
-                img.scaleToWidth(2048)
-                canvas.add(img)
-                this.renderModelCanvas({canvas, canvas_texture})
-            }
-        )*/
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
+            /* TODO normal map */
             shininess: 1,
             side: THREE.DoubleSide})
         let mesh
 
-        model.scale.x = factor
-        model.scale.y = factor
-        model.scale.z = factor
-        model.traverse((child) => {
+        part.scale.multiplyScalar(factor)
+        part.traverse((child) => {
             if (child instanceof THREE.Mesh) {
                 mesh = child
                 child.name = name
                 child.material = material
-                model.position.y = -0.25
             }
         })
-        this.models[index] = {mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
-        this.scene.add(model)
+        part.position.y = -0.25
+        this.parts[index] = {mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
+        this.scene.add(part)
     }
-    loadModel(model_info, index) {
+    loadModel(part_info, index) {
         let obj_loader = new OBJLoader2()
-        obj_loader.load(model_info.filename,
-            (model) => this.setupModel(model, model_info.name, index),
+        obj_loader.load(part_info.obj_file,
+            (part) => this.setupModel(part, part_info, index),
             null,
             (err) => {console.error(err)},
             null, false
@@ -98,7 +99,7 @@ export default class Renderer {
         scene.add(this.point_light1)
         this.renderLoop()
     }
-    constructor(container) {
+    constructor(container, model_info_url) {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
@@ -106,53 +107,19 @@ export default class Renderer {
         this.height = 600 // window.innerHeight
         this.view_angle = 75
         this.initThree()
-        console.log('Loading scene')
-        this.models_info = [
-            {filename: "t-shirt-uv/back.obj", name: "back"},
-            {filename: "t-shirt-uv/front.obj", name: "front"},
-            {filename: "t-shirt-uv/sleeve_left.obj", name: "sleeve_left"},
-            {filename: "t-shirt-uv/sleeve_right.obj", name: "sleeve_right"}
-        ]
-        this.models = []
-        this.models_info.forEach(this.loadModel, this)
+        // TODO ask if it's better to pass url or json
+        this.model_info = require('static/t-shirt/t-shirt.json')
+        this.parts = []
+        this.model_info.parts.forEach(this.loadModel, this)
         this.fixed_logos = {}
     }
     getFixedPositions() {
-        return [
-            {
-                name: "Top left large",
-                part: "front",
-                width: 500,
-                top: 450,
-                left: 450
-            },
-            {
-                name: "Top left small",
-                part: "front",
-                width: 200,
-                top: 520,
-                left: 520
-            },
-            {
-                name: "Bottom right large",
-                part: "front",
-                width: 500,
-                top: 1300,
-                left: 1100
-            },
-            {
-                name: "Bottom right small",
-                part: "front",
-                width: 200,
-                top: 1450,
-                left: 1250
-            }
-        ]
+        return this.model_info.fixed_logos
     }
     logoPositionToSpecs(position) {
         let config = (this.getFixedPositions())[position]
         let specs = {
-            model: this.models.find((model) => model.mesh.name == config.part),
+            model: this.parts.find((part) => part.mesh.name == config.part),
             width: config.width,
             top: config.top,
             left: config.left

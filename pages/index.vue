@@ -135,7 +135,7 @@ export default {
   },
   mounted () {
     if (!this.renderer)
-      this.renderer = new Renderer(this.$refs.rendererContainer)
+      this.renderer = new Renderer(this.$refs.rendererContainer, "t-shirt/t-shirt.json")
     else
       console.log("keeping renderer")
     // TO UPDATE EVERYTIME MODEL CHANGES
