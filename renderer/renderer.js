@@ -1,41 +1,46 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
-import { fabric } from 'fabric'
-
-function to_radians(angle) {
-    return angle * 2 * Math.PI / 360.0
-}
+import { to_radians } from "./util.js"
+import UvCanvas, { Rect } from "./uv_canvas.js"
 
 export default class Renderer {
-    renderModelCanvas(model) {
-        model.canvas.renderAll()
-        model.canvas_texture.needsUpdate = true
+    setupCanvas(canvas, canvas_texture, color_map = null) {
+        canvas.on("after:render", () => {
+            canvas_texture.needsUpdate = true
+        })
+        canvas.on("mouse:down", (event) => {
+            console.log(event)
+        })
+        this.renderer.domElement.addEventListener("mousedown", this.onMouseDown.bind(this))
+        this.renderer.domElement.addEventListener("mouseup", this.onMouseUp.bind(this))
+        this.renderer.domElement.addEventListener("mousemove", this.onMouseMove.bind(this))
+        canvas.add(new Rect({width: 2048, height: 2048, fill: 'grey'}))
+        canvas.renderAll()
+        /*if (color_map) {
+            fabric.Image.fromURL(
+                color_map,
+                (img) => {
+                    img.scaleToWidth(2048)
+                    canvas.add(img)
+                    canvas.renderAll()
+                }
+            )
+        }*/
     }
     setupModel(part, part_info, index) {
         const factor = 1
         let name = part_info.name
-        let canvas = new fabric.Canvas(name + '_canvas', {width: 2048, height: 2048})
-        let canvas_texture = new THREE.Texture(canvas.getElement())
-        canvas.add(new fabric.Rect({width: 2048, height: 2048, fill: 'grey'}))
-        if (part_info.color_map) {
-            fabric.Image.fromURL(
-                part_info.color_map,
-                (img) => {
-                    img.scaleToWidth(2048)
-                    canvas.add(img)
-                    this.renderModelCanvas({canvas, canvas_texture})
-                }
-            )
-        }
-        this.renderModelCanvas({canvas, canvas_texture})
+        let canvas = new UvCanvas("canvas_" + index, {width: 2048, height: 2048})
+        let canvas_texture = new THREE.Texture(canvas.canvas_element)
+        this.setupCanvas(canvas, canvas_texture)
+
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
             /* TODO normal map */
             shininess: 1,
             side: THREE.DoubleSide})
         let mesh
-
         part.scale.multiplyScalar(factor)
         part.traverse((child) => {
             if (child instanceof THREE.Mesh) {
@@ -65,7 +70,7 @@ export default class Renderer {
         const point_light1 = new THREE.PointLight(0xdddddd, 1, 1000, 4)
         point_light0.position.copy(new THREE.Vector3(0, 5, 5))
         point_light1.position.copy(new THREE.Vector3(0, 10, -5))
-        //const raycaster = new THREE.Raycaster();
+        const raycaster = new THREE.Raycaster();
 
         const renderer = new THREE.WebGLRenderer({antialias: true})
         renderer.setClearColor(0xFCFCFC)
@@ -93,7 +98,7 @@ export default class Renderer {
         this.light = light
         this.point_light0 = point_light0
         this.point_light1 = point_light1
-        //this.raycaster = raycaster
+        this.raycaster = raycaster
         scene.add(this.light)
         scene.add(this.point_light0)
         scene.add(this.point_light1)
@@ -129,7 +134,7 @@ export default class Renderer {
     addFixedLogo(image_url, uuid, position) {
         if (uuid in this.fixed_logos) {
             this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.renderModelCanvas(this.fixed_logos[uuid].model)
+            this.fixed_logos[uuid].model.canvas.renderAll()
         }
         let specs = this.logoPositionToSpecs(position)
         fabric.Image.fromURL(image_url, (image) => {
@@ -143,19 +148,65 @@ export default class Renderer {
                 position: position
             }
             specs.model.canvas.add(image)
-            this.renderModelCanvas(specs.model)
+            specs.model.canvas.renderAll()
         })
     }
     removeLogo(uuid) {
         /* TODO non fixed logo */
         if (uuid in this.fixed_logos) {
             this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.renderModelCanvas(this.fixed_logos[uuid].model)
+            this.fixed_logos[uuid].model.canvas.renderAll()
             delete this.fixed_logos[uuid]
         }
     }
     renderLoop() {
         window.requestAnimationFrame(this.renderLoop.bind(this))
         this.renderer.render(this.scene, this.camera)
+    }
+    updateCollision() {
+        let bounding_rect = this.renderer.domElement.getBoundingClientRect()
+        let coords = {
+            x: (event.offsetX / bounding_rect.width) * 2 - 1,
+            y: -(event.offsetY / bounding_rect.height) * 2 + 1
+        }
+        this.raycaster.setFromCamera(coords, this.camera)
+        let ray_test = this.raycaster.intersectObjects(this.parts.map((part) => part.mesh))
+
+        if (ray_test.length) {
+            let part = this.parts.find((part) => part.mesh === ray_test[0].object)
+            // TODO error check
+            let event_info = {
+                canvas: part.canvas,
+                clientX: ray_test[0].uv.x * bounding_rect.width + bounding_rect.left,
+                clientY: ray_test[0].uv.y * bounding_rect.height + bounding_rect.top
+            }
+            return event_info
+        }
+        else
+            return null
+    }
+    genFakeEvent(event, type, info) {
+        if (info) {
+            var new_event = document.createEvent("MouseEvents")
+            new_event.initMouseEvent(type, false, true, window, 1, 0, 0,
+                info.clientX, info.clientY, event.ctrlKey, event.altKey, event.shiftKey,
+                event.metaKey, event.button, info.canvas.upperCanvasEl)
+            return (new_event)
+        }
+        else
+            return null
+    }
+    onMouseDown(event) {
+        
+        this.updateCollision(   )
+    }
+    onMouseUp(event) {
+
+    }
+    onMouseMove(event) {
+        let info = this.updateCollision()
+        let new_event = this.genFakeEvent(event, event.type, info)
+        /*if (new_event != null)
+            info.canvas.upperCanvasEl.dispatchEvent(new_event)*/
     }
 }
