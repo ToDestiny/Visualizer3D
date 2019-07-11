@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
 import { to_radians } from "./util.js"
-import UvCanvas, { Rect } from "./uv_canvas.js"
+import * as UvCanvas from "./uv_canvas.js"
 
 export default class Renderer {
     setupCanvas(canvas, canvas_texture, color_map = null) {
@@ -15,7 +15,7 @@ export default class Renderer {
         this.renderer.domElement.addEventListener("mousedown", this.onMouseDown.bind(this))
         this.renderer.domElement.addEventListener("mouseup", this.onMouseUp.bind(this))
         this.renderer.domElement.addEventListener("mousemove", this.onMouseMove.bind(this))
-        canvas.add(new Rect({width: 2048, height: 2048, fill: 'grey'}))
+        canvas.add(new UvCanvas.Rect({width: 2048, height: 2048, fill: 'grey'}))
         canvas.renderAll()
         /*if (color_map) {
             fabric.Image.fromURL(
@@ -31,14 +31,14 @@ export default class Renderer {
     setupModel(part, part_info, index) {
         const factor = 1
         let name = part_info.name
-        let canvas = new UvCanvas("canvas_" + index, {width: 2048, height: 2048})
+        let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
         let canvas_texture = new THREE.Texture(canvas.canvas_element)
         this.setupCanvas(canvas, canvas_texture)
 
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
             /* TODO normal map */
-            shininess: 1,
+            shininess: 15,
             side: THREE.DoubleSide})
         let mesh
         part.scale.multiplyScalar(factor)
@@ -137,7 +137,7 @@ export default class Renderer {
             this.fixed_logos[uuid].model.canvas.renderAll()
         }
         let specs = this.logoPositionToSpecs(position)
-        fabric.Image.fromURL(image_url, (image) => {
+        UvCanvas.ImageRect.fromURL(image_url, (image) => {
             image.scaleToWidth(specs.width)
             image.top = specs.top
             image.left = specs.left

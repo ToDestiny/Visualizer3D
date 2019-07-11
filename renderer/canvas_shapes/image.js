@@ -1,15 +1,24 @@
 import { to_radians, multiply_matrices } from "../util.js"
 
-export class Rect {
-    constructor(options) {
+export class ImageRect {
+    static fromURL(url, callback, options) {
+        let img_el = new Image()
+        img_el.onload = function () {
+            let img_object = new ImageRect(img_el, options)
+            callback(img_object)
+        }
+        img_el.src = url
+    }
+    constructor(img_el, options) {
+        this.img_el = img_el
         this.parseOptions(options)
     }
     parseOptions(options) {
         for (var prop in options) {
             this[prop] = options[prop]
         }
-        this.width = this.width || 400
-        this.height = this.height || 400
+        this.width = this.width || this.img_el.width
+        this.height = this.height || this.img_el.height
         this.angle = this.angle || 0
         this.top = this.top || 0
         this.left = this.left || 0
@@ -43,8 +52,7 @@ export class Rect {
         return multiply_matrices(rotation, translate)
     }
     _doDraw(ctx) {
-        ctx.fillStyle = this.fill
-        ctx.fillRect(-(this.width / 2), -(this.height / 2), this.width, this.height)
+        ctx.drawImage(this.img_el, -(this.width / 2), -(this.height / 2), this.width, this.height)
     }
     render(ctx) {
         ctx.save()
@@ -52,5 +60,21 @@ export class Rect {
         ctx.transform(transform[0], transform[3], transform[1], transform[4], transform[2], transform[5])
         this._doDraw(ctx)
         ctx.restore()
+    }
+    scale(factor) {
+        this.width *= factor
+        this.height *= factor
+    }
+    scaleToWidth(new_width) {
+        if (this.width === 0 && new_width != 0)
+            throw "Width is 0, no constant is going scale it up to argument"
+        this.height = this.height * new_width / this.width
+        this.width = new_width
+    }
+    scaleToHeight(new_height) {
+        if (this.height === 0 && new_height != 0)
+            throw "height is 0, no constant is going scale it up to argument"
+        this.width = this.width * new_height / this.height
+        this.height = new_height
     }
 }

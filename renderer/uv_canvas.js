@@ -1,6 +1,4 @@
-import Rect from "./canvas_shapes/rect.js"
-
-export default class UvCanvas {
+class Canvas {
     constructor(name, options) {
         this.canvas_element = document.getElementById(name)
         if (!this.canvas_element) {
@@ -53,4 +51,6 @@ export default class UvCanvas {
     }
 }
 
-export { Rect }
+export { Canvas }
+export { Rect } from "./canvas_shapes/rect.js"
+export { ImageRect } from "./canvas_shapes/image.js"
