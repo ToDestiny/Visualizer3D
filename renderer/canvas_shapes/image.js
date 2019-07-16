@@ -11,9 +11,9 @@ export class ImageRect {
     }
     constructor(img_el, options) {
         this.img_el = img_el
-        this.parseOptions(options)
+        this._parseOptions(options)
     }
-    parseOptions(options) {
+    _parseOptions(options) {
         for (var prop in options) {
             this[prop] = options[prop]
         }
@@ -23,6 +23,16 @@ export class ImageRect {
         this.top = this.top || 0
         this.left = this.left || 0
         this.fill = this.fill || "black"
+    }
+    _doDraw(ctx) {
+        ctx.drawImage(this.img_el, -(this.width / 2), -(this.height / 2), this.width, this.height)
+    }
+    _render(ctx) {
+        ctx.save()
+        let transform = this.calcTransformMatrix()
+        ctx.transform(transform[0], transform[3], transform[1], transform[4], transform[2], transform[5])
+        this._doDraw(ctx)
+        ctx.restore()
     }
     getCenterPoint() {
         return {
@@ -49,22 +59,13 @@ export class ImageRect {
     calcTransformMatrix() {
         let translate = this.calcTranslationMatrix()
         let rotation = this.calcRotationMatrix()
-        return multiply_matrices(rotation, translate)
-    }
-    _doDraw(ctx) {
-        ctx.drawImage(this.img_el, -(this.width / 2), -(this.height / 2), this.width, this.height)
-    }
-    render(ctx) {
-        ctx.save()
-        let transform = this.calcTransformMatrix()
-        ctx.transform(transform[0], transform[3], transform[1], transform[4], transform[2], transform[5])
-        this._doDraw(ctx)
-        ctx.restore()
+        return multiply_matrices(translate, rotation)
     }
     scale(factor) {
         this.width *= factor
         this.height *= factor
     }
+
     scaleToWidth(new_width) {
         if (this.width === 0 && new_width != 0)
             throw "Width is 0, no constant is going scale it up to argument"
