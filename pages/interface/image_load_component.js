@@ -47,8 +47,6 @@ export default {
             this.$refs.tmpFile.click()
         },
         addFiles (files) {
-            const images = this.images
-    
             let i = 0;
             for (let fl of files) {
                 const uuid = uuidv4()
