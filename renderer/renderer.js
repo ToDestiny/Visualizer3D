@@ -121,6 +121,19 @@ export default class Renderer {
     getFixedPositions() {
         return this.model_info.fixed_logos
     }
+    getTemplates() {
+        // STUB
+        return [
+            {
+                url: "https://i.dailymail.co.uk/i/pix/2015/09/01/18/2BE1E88B00000578-3218613-image-m-5_1441127035222.jpg",
+                name: "google"
+            },
+            {
+                url: "https://lever-client-logos.s3.amazonaws.com/1370311e-debf-49c0-986f-2eda81c17902-1491097605342.png",
+                name: "openai"
+            }
+        ]
+    }
     logoPositionToSpecs(position) {
         let config = (this.getFixedPositions())[position]
         let specs = {
