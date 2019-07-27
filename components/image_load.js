@@ -81,10 +81,5 @@ export default {
           delete this.images[uuid]
           this.image_count = Object.keys(this.images).length
         }
-    },
-    mounted () {
-        // TO UPDATE EVERYTIME MODEL CHANGES
-        if (this.renderer)
-            this.fixed_positions = this.renderer.getFixedPositions()
     }
 }

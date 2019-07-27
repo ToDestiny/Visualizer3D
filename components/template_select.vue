@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap">
+    <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" v-if="templates">
         <div class="inline-block" v-for="(thumb_info, index) in templates" :key="index">
             <input class="hidden-radio" type="radio" :id="thumb_info.name" :value="thumb_info" v-model="selection">
             <label :for="thumb_info.name" class="templ-container">
@@ -8,12 +8,12 @@
             </label>
         </div>
         <div>
-            {{ selection.name }}
+            {{ templates[template_selection].name }}
         </div>
     </div>
 </template>
 
-<script src="./template_select_component.js"></script>
+<script src="./template_select.js"></script>
 
 <style>
 .templ-container:hover {

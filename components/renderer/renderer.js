@@ -5,63 +5,6 @@ import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
 
 export default class Renderer {
-    setupCanvas(canvas, canvas_texture, color_map = null) {
-        canvas.on("after:render", () => {
-            canvas_texture.needsUpdate = true
-        })
-        canvas.on("mouse:down", (event) => {
-            console.log(event)
-        })
-        this.renderer.domElement.addEventListener("mousedown", this.onMouseDown.bind(this))
-        this.renderer.domElement.addEventListener("mouseup", this.onMouseUp.bind(this))
-        this.renderer.domElement.addEventListener("mousemove", this.onMouseMove.bind(this))
-        canvas.add(new UvCanvas.Rect({width: 2048, height: 2048, fill: 'grey'}))
-        canvas.renderAll()
-        /*if (color_map) {
-            fabric.Image.fromURL(
-                color_map,
-                (img) => {
-                    img.scaleToWidth(2048)
-                    canvas.add(img)
-                    canvas.renderAll()
-                }
-            )
-        }*/
-    }
-    setupModel(part, part_info, index) {
-        const factor = 1
-        let name = part_info.name
-        let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
-        let canvas_texture = new THREE.Texture(canvas.canvas_element)
-        this.setupCanvas(canvas, canvas_texture)
-
-        let material = new THREE.MeshPhongMaterial({color: 0xffffff,
-            map: canvas_texture,
-            /* TODO normal map */
-            shininess: 15,
-            side: THREE.DoubleSide})
-        let mesh
-        part.scale.multiplyScalar(factor)
-        part.traverse((child) => {
-            if (child instanceof THREE.Mesh) {
-                mesh = child
-                child.name = name
-                child.material = material
-            }
-        })
-        part.position.y = -0.25
-        this.parts[index] = {mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
-        this.scene.add(part)
-    }
-    loadModel(part_info, index) {
-        let obj_loader = new OBJLoader2()
-        obj_loader.load(part_info.obj_file,
-            (part) => this.setupModel(part, part_info, index),
-            null,
-            (err) => {console.error(err)},
-            null, false
-        )
-    }
     initThree(model) {
         const scene = new THREE.Scene()
 
@@ -104,7 +47,77 @@ export default class Renderer {
         scene.add(this.point_light1)
         this.renderLoop()
     }
-    constructor(container, model_info_url) {
+    setupCanvas(canvas, canvas_texture, color_map = null) {
+        canvas.on("after:render", () => {
+            canvas_texture.needsUpdate = true
+        })
+        canvas.on("mouse:down", (event) => {
+            console.log(event)
+        })
+        canvas.add(new UvCanvas.Rect({width: 2048, height: 2048, fill: 'grey'}))
+        canvas.renderAll()
+        /*if (color_map) {
+            fabric.Image.fromURL(
+                color_map,
+                (img) => {
+                    img.scaleToWidth(2048)
+                    canvas.add(img)
+                    canvas.renderAll()
+                }
+            )
+        }*/
+    }
+    setupPart(part, part_info, index) {
+        const factor = 1
+        let name = part_info.name
+        let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
+        let canvas_texture = new THREE.Texture(canvas.canvas_element)
+        this.setupCanvas(canvas, canvas_texture)
+
+        let material = new THREE.MeshPhongMaterial({color: 0xffffff,
+            map: canvas_texture,
+            /* TODO normal map */
+            shininess: 15,
+            side: THREE.DoubleSide})
+        let mesh
+        part.scale.multiplyScalar(factor)
+        part.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+                mesh = child
+                child.name = name
+                child.material = material
+            }
+        })
+        //part.position.y = -0.25
+        this.parts[index] = {obj: part, mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
+        this.scene.add(part)
+    }
+    loadModel(part_info, index) {
+        let obj_loader = new OBJLoader2()
+        obj_loader.load(part_info.obj_file,
+            (part) => this.setupPart(part, part_info, index),
+            null,
+            (err) => {console.error(err)},
+            null, false
+        )
+    }
+    resetModel() {
+        if (this.parts) {
+            this.parts.forEach((part) => {
+                this.scene.remove(part.obj)
+                // TODO does the canvas stuff need to be freed?
+            })
+            this.parts = []
+        }
+    }
+    setModel(model_info) {
+        this.resetModel()
+        this.model_info = model_info
+        this.parts = []
+        this.model_info.parts.forEach(this.loadModel, this)
+        this.fixed_logos = {}
+    }
+    constructor(container) {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
@@ -112,30 +125,26 @@ export default class Renderer {
         this.height = 600 // window.innerHeight
         this.view_angle = 75
         this.initThree()
-        // TODO ask if it's better to pass url or json
-        this.model_info = require('static/t-shirt/t-shirt.json')
-        this.parts = []
-        this.model_info.parts.forEach(this.loadModel, this)
-        this.fixed_logos = {}
     }
-    getFixedPositions() {
+    getPositions() {
+        // TODO add custom config
         return this.model_info.fixed_logos
     }
     getTemplates() {
         // STUB
         return [
             {
-                url: "https://i.dailymail.co.uk/i/pix/2015/09/01/18/2BE1E88B00000578-3218613-image-m-5_1441127035222.jpg",
-                name: "google"
+                url: 't-shirt/first.jpg',
+                name: 'first'
             },
             {
-                url: "https://lever-client-logos.s3.amazonaws.com/1370311e-debf-49c0-986f-2eda81c17902-1491097605342.png",
-                name: "openai"
+                url: 't-shirt/second.jpg',
+                name: 'second'
             }
         ]
     }
     logoPositionToSpecs(position) {
-        let config = (this.getFixedPositions())[position]
+        let config = (this.getPositions())[position]
         let specs = {
             model: this.parts.find((part) => part.mesh.name == config.part),
             width: config.width,
@@ -144,7 +153,7 @@ export default class Renderer {
         }
         return specs
     }
-    addFixedLogo(image_url, uuid, position) {
+    addLogo(image_url, uuid, position) {
         if (uuid in this.fixed_logos) {
             this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
             this.fixed_logos[uuid].model.canvas.renderAll()
@@ -165,7 +174,6 @@ export default class Renderer {
         })
     }
     removeLogo(uuid) {
-        /* TODO non fixed logo */
         if (uuid in this.fixed_logos) {
             this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
             this.fixed_logos[uuid].model.canvas.renderAll()

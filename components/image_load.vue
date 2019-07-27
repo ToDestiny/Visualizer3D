@@ -22,7 +22,7 @@
     </div>
 </template>
 
-<script src="./image_load_component.js"></script>
+<script src="./image_load.js"></script>
 
 <style>
 .logo_container {

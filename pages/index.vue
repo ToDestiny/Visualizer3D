@@ -5,10 +5,15 @@
         </h1>
         <div class="d-flex flex-row align-items-start">
             <div ref="rendererContainer"/>
-            <b-tabs content-class="tab-content" class="flex-grow-1">
-                <b-tab title="Templates"><template-select-component v-bind:renderer="renderer"/></b-tab>
-                <b-tab title="Logos" active><image-load-component v-bind:renderer="renderer"/></b-tab>
-            </b-tabs>
+            <div class="d-block">
+                <div class="d-flex flex-row align-items-start">
+                    <!-- tabs -->
+                    <div class="tab-button">Templates</div>
+                    <div class="tab-button">Logos</div>
+                </div>
+                <template-select class="config-panel" :class="[active_panel == 'templates' ? 'visible' : 'hidden']"/>
+                <!-- image-load class="config-panel" :class="[active_panel == 'logos' ? 'visible' : 'hidden']"/-->
+            </div>
         </div>
     </section>
 </template>

@@ -56,5 +56,11 @@
             "top": 1450,
             "left": 1250
         }
+    ],
+    "templates": [
+        {
+            "name": "example",
+            "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg"
+        }
     ]
 }
