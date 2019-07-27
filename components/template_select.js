@@ -15,9 +15,7 @@ export default {
     props: ['renderer'],
     computed: {
         template_selection: {
-            get() {
-                return this.$store.state.template_selection
-            },
+            get() { return this.$store.state.template_selection },
             set(value) {
                 this.$store.dispatch('set_template', { renderer: this.renderer, index: value })
             }

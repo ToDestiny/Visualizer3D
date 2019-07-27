@@ -15,15 +15,15 @@ export default {
             renderer: null,
         }
     },
-    methods: {
-        selectTab(value) {
-            // TODO turn into radio buttons?
-            this.$store.dispatch('select_panel', value)
+    methods: {},
+    computed: {
+        active_panel: {
+            get() { return this.$store.state.active_panel },
+            set(value) {
+                this.$store.dispatch('select_panel', value)
+            }
         }
     },
-    computed: mapState({
-        active_panel: 'active_panel'
-    }),
     mounted () {
         if (!this.$store.state.initialized) {
             this.renderer = new Renderer(this.$refs.rendererContainer)
