@@ -101,14 +101,28 @@ export default class Renderer {
         this.parts[index] = {obj: part, mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
         this.scene.add(part)
     }
-    loadModel(part_info, index) {
+    loadModel(part_info, index, resolve, reject) {
         let obj_loader = new OBJLoader2()
         obj_loader.load(part_info.obj_file,
-            (part) => this.setupPart(part, part_info, index),
+            (part) => {
+                this.setupPart(part, part_info, index)
+                resolve(part)
+            },
             null,
-            (err) => {console.error(err)},
-            null, false
-        )
+            (err) => {
+                console.error(err)
+                reject(err)
+            },
+            null, true)
+    }
+    setModel(model_info) {
+        this.resetModel()
+        this.model_info = model_info
+        this.parts = []
+        this.fixed_logos = {}
+        return Promise.all(this.model_info.parts.map((part, index) => {
+                return new Promise((resolve, reject) => this.loadModel(part, index, resolve, reject))
+            }))
     }
     resetModel() {
         if (this.parts) {
@@ -118,13 +132,6 @@ export default class Renderer {
             })
             this.parts = []
         }
-    }
-    setModel(model_info) {
-        this.resetModel()
-        this.model_info = model_info
-        this.parts = []
-        this.fixed_logos = {}
-        this.model_info.parts.forEach(this.loadModel, this)
     }
     setTemplate(index) {
         // TODO stub

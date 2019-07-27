@@ -38,12 +38,12 @@ export const mutations = {
 export const actions = {
     async initialize(context, { renderer, model_url }) {
         let model = await fetch(model_url).then(r => r.json())
-        renderer.setModel(model)
+        await renderer.setModel(model)
         context.commit('initialize', model)
     },
     async load_model(context, { renderer, model_url }) {
         let model = await fetch(model_url).then(r => r.json())
-        renderer.setModel(model)
+        await renderer.setModel(model)
         context.commit('load_model', model)
     },
     set_logo(context, { renderer, logo }) {
