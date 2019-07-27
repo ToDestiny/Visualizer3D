@@ -30,40 +30,40 @@ export const mutations = {
     set_template(state, index) {
         state.template_selection = index
     },
-    select_panel(state, interf) {
-        state.active_panel = interf
+    select_panel(state, panel) {
+        state.active_panel = panel
     }
 }
 
 export const actions = {
-    async initialize(state, { renderer, model_url }) {
+    async initialize(context, { renderer, model_url }) {
         let model = await fetch(model_url).then(r => r.json())
         renderer.setModel(model)
-        state.commit('initialize', model)
+        context.commit('initialize', model)
     },
-    async load_model(state, { renderer, model_url }) {
+    async load_model(context, { renderer, model_url }) {
         let model = await fetch(model_url).then(r => r.json())
         renderer.setModel(model)
-        state.commit('load_model', model)
+        context.commit('load_model', model)
     },
-    set_logo(state, { renderer, logo }) {
+    set_logo(context, { renderer, logo }) {
         renderer.setLogo(logo)    
-        state.commit('set_logo', logo)
+        context.commit('set_logo', logo)
     },
-    remove_logo(state, { renderer, uuid }) {
+    remove_logo(context, { renderer, uuid }) {
         renderer.removeLogo(uuid)
-        state.commit('remove_logo', uuid)
+        context.commit('remove_logo', uuid)
     },
-    set_template(state, { renderer, index }) {
+    set_template(context, { renderer, index }) {
         // TODO move inside renderer
-        if (!state.model && !state.model.templates)
+        if (!context.state.model || !context.state.model.templates)
              throw "Tried to set template, but model is not initialized"
-        else if (!state.model.templates[index])
+        else if (!context.state.model.templates[index])
             throw "Index specified doesn't correspond to a template"
         renderer.setTemplate(index)
-        state.commit('set_template', index)
+        context.commit('set_template', index)
     },
-    select_panel(state, interf) {
-        state.commit('select_panel', interf)
+    select_panel(context, panel) {
+        context.commit('select_panel', panel)
     }
 }

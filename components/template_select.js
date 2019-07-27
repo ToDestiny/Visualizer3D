@@ -12,13 +12,14 @@ export default {
     components: {
         FontAwesomeIcon
     },
+    props: ['renderer'],
     computed: {
         template_selection: {
             get() {
                 return this.$store.state.template_selection
             },
             set(value) {
-                this.$store.state.dispatch('set_template', value)
+                this.$store.dispatch('set_template', { renderer: this.renderer, index: value })
             }
         },
         templates: {

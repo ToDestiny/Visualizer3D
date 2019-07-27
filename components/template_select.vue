@@ -1,7 +1,7 @@
 <template>
     <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" v-if="templates">
         <div class="inline-block" v-for="(thumb_info, index) in templates" :key="index">
-            <input class="hidden-radio" type="radio" :id="thumb_info.name" :value="thumb_info" v-model="selection">
+            <input class="hidden-radio" type="radio" :id="thumb_info.name" :value="index" v-model="template_selection">
             <label :for="thumb_info.name" class="templ-container">
                 <img class="templ-thumb" :src="thumb_info.url" alt="Template Preview" :ref="thumb_info.name">
                 <div>{{ thumb_info.name.substring(0, 13) }}</div>

@@ -47,6 +47,15 @@ export default class Renderer {
         scene.add(this.point_light1)
         this.renderLoop()
     }
+    constructor(container) {
+        this.container = container
+        this.rotation_y = 0
+        this.rotation_x = 0
+        this.width = 800 // window.innerWidth
+        this.height = 600 // window.innerHeight
+        this.view_angle = 75
+        this.initThree()
+    }
     setupCanvas(canvas, canvas_texture, color_map = null) {
         canvas.on("after:render", () => {
             canvas_texture.needsUpdate = true
@@ -114,18 +123,15 @@ export default class Renderer {
         this.resetModel()
         this.model_info = model_info
         this.parts = []
-        this.model_info.parts.forEach(this.loadModel, this)
         this.fixed_logos = {}
+        this.model_info.parts.forEach(this.loadModel, this)
     }
-    constructor(container) {
-        this.container = container
-        this.rotation_y = 0
-        this.rotation_x = 0
-        this.width = 800 // window.innerWidth
-        this.height = 600 // window.innerHeight
-        this.view_angle = 75
-        this.initThree()
+    setTemplate(index) {
+        // TODO stub
+        console.warn("setTemplate stub called")
     }
+    // TODO rewrite everything under this
+    // ---------------------------------------------------------------------------------- //
     getPositions() {
         // TODO add custom config
         return this.model_info.fixed_logos

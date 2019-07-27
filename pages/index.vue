@@ -8,10 +8,12 @@
             <div class="d-block">
                 <div class="d-flex flex-row align-items-start">
                     <!-- tabs -->
-                    <div class="tab-button">Templates</div>
-                    <div class="tab-button">Logos</div>
+                    <div class="tab-button" @click="selectTab('templates')">Templates</div>
+                    <div class="tab-button" @click="selectTab('logos')">Logos</div>
                 </div>
-                <template-select class="config-panel" :class="[active_panel == 'templates' ? 'visible' : 'hidden']"/>
+                <template-select
+                    class="config-panel" :class="[active_panel == 'templates' ? 'visible' : 'hidden']"
+                    :renderer="renderer"/>
                 <!-- image-load class="config-panel" :class="[active_panel == 'logos' ? 'visible' : 'hidden']"/-->
             </div>
         </div>
