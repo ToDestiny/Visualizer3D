@@ -10,15 +10,11 @@
                     <!-- tabs -->
                     <input class="tab-radio" type="radio" id="0" value="templates" v-model="active_panel">
                     <label :for="0" class="tab-container">Templates</label>
-                    <input class="tab-radio" type="radio" id="1" value="logs" v-model="active_panel">
+                    <input class="tab-radio" type="radio" id="1" value="logos" v-model="active_panel">
                     <label :for="1" class="tab-container">Logs</label>
                 </div>
-                <div class="config-panel" :class="[active_panel == 'templates' ? '' : 'd-none']">
-                    <template-select :renderer="renderer"/>
-                </div>
-                <div class="config-panel" :class="[active_panel == 'logos' ? '' : 'd-none']">
-                    <!-- image-load class="config-panel" :class="[active_panel == 'logos' ? 'visible' : 'hidden']"/-->
-                </div>
+                <template-select :renderer="renderer" :active="active_panel == 'templates'"/>
+                <image-load :renderer="renderer" :active="active_panel == 'logos'"/>
             </div>
         </div>
     </section>

@@ -12,21 +12,16 @@ export default {
     components: {
         FontAwesomeIcon
     },
-    props: ['renderer'],
+    props: ['renderer', 'active'],
     computed: {
+        ...mapState({
+            templates: (state) => state.model ? state.model.templates : null
+        }),
         template_selection: {
             get() { return this.$store.state.template_selection },
             set(value) {
                 this.$store.dispatch('set_template', { renderer: this.renderer, index: value })
             }
         },
-        templates: {
-            get() {
-                if (this.$store.state.model) {
-                    return this.$store.state.model.templates
-                }
-                return null
-            }
-        }
     }
 }

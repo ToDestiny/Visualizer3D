@@ -5,6 +5,10 @@ import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
 
 export default class Renderer {
+    static getPositions(model_info) {
+        // TODO add custom config
+        return model_info.fixed_logos
+    }
     initThree(model) {
         const scene = new THREE.Scene()
 
@@ -137,12 +141,31 @@ export default class Renderer {
         // TODO stub
         console.warn("setTemplate stub called")
     }
+    setLogo({ data, uuid, position }, resolve) {
+        if (uuid in this.fixed_logos) {
+            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
+            this.fixed_logos[uuid].model.canvas.renderAll()
+        }
+        let specs = this.logoPositionToSpecs(position)
+        return new Promise((resolve) => {
+            UvCanvas.ImageRect.fromURL(data, (image) => {
+                image.scaleToWidth(specs.width)
+                image.top = specs.top
+                image.left = specs.left
+                this.fixed_logos[uuid] = {
+                    image: image,
+                    canvas: specs.model.canvas,
+                    model: specs.model,
+                    position: position
+                }
+                specs.model.canvas.add(image)
+                specs.model.canvas.renderAll()
+                resolve()
+            })
+        })
+    }
     // TODO rewrite everything under this
     // ---------------------------------------------------------------------------------- //
-    getPositions() {
-        // TODO add custom config
-        return this.model_info.fixed_logos
-    }
     getTemplates() {
         // STUB
         return [
@@ -157,7 +180,7 @@ export default class Renderer {
         ]
     }
     logoPositionToSpecs(position) {
-        let config = (this.getPositions())[position]
+        let config = (Renderer.getPositions(this.model_info))[position]
         let specs = {
             model: this.parts.find((part) => part.mesh.name == config.part),
             width: config.width,
@@ -165,26 +188,6 @@ export default class Renderer {
             left: config.left
         }
         return specs
-    }
-    addLogo(image_url, uuid, position) {
-        if (uuid in this.fixed_logos) {
-            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.fixed_logos[uuid].model.canvas.renderAll()
-        }
-        let specs = this.logoPositionToSpecs(position)
-        UvCanvas.ImageRect.fromURL(image_url, (image) => {
-            image.scaleToWidth(specs.width)
-            image.top = specs.top
-            image.left = specs.left
-            this.fixed_logos[uuid] = {
-                image: image,
-                canvas: specs.model.canvas,
-                model: specs.model,
-                position: position
-            }
-            specs.model.canvas.add(image)
-            specs.model.canvas.renderAll()
-        })
     }
     removeLogo(uuid) {
         if (uuid in this.fixed_logos) {

@@ -20,7 +20,7 @@ export default {
         active_panel: {
             get() { return this.$store.state.active_panel },
             set(value) {
-                this.$store.dispatch('select_panel', value)
+                this.$store.commit('select_panel', value)
             }
         }
     },

@@ -1,24 +1,27 @@
 <template>
+    <div class="config-panel" :class="[active ? '' : 'd-none']">
     <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
         <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
-        <p v-if="image_count == 0">Drag your logos here</p>
-        <div class="inline-block" v-for="(img_info, uuid) in images" :key="uuid">
+        <p v-if="logos_count == 0">Drag your logos here</p>
+        <div class="inline-block" v-for="(img_info, k) in logos" :key="k">
             <div class="logo_container">
-                <img class="logo_thumb" :src="img_info.data" alt="Logo Preview" :ref="'img_' + uuid"/>
-                <button class="delete-button" @click.prevent.stop="deleteImage(uuid)">
+                <img class="logo_thumb" :src="img_info.data" alt="Logo Preview" :ref="'img_' + k"/>
+                <button class="delete-button" @click.prevent.stop="deleteImage(k)">
                     <font-awesome-icon icon="window-close"/>
                 </button>
             </div>
             <div>
                 {{ img_info.file.name.substring(0, 13) }}
             </div>
+            <!--
             <select v-model.number="img_info.new_position" @change="moveLogo(uuid)">
                 <option v-for="(pos, index) in fixed_positions" v-bind:value="index">
                     {{ pos.name }}
                 </option>
-            </select>
+            </select>-->
         </div>
         <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
+    </div>
     </div>
 </template>
 
