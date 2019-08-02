@@ -53,15 +53,17 @@ export const actions = {
         await renderer.setModel(model)
         context.commit('load_model', model)
     },
-    async set_logo(context, { renderer, logo }) {
-        if (!logo.uuid)
-            logo.uuid = uuidv4()
-        await renderer.setLogo(logo)
-        context.commit('set_logo', logo)
+    async set_logo(context, { renderer, logo, position }) {
+        let new_logo = {...logo}
+        if (!new_logo.uuid)
+            new_logo.uuid = uuidv4()
+        new_logo.position = position 
+        context.commit('set_logo', new_logo)
+        renderer.setLogo(new_logo)
     },
-    async remove_logo(context, { renderer, logo }) {
-        await renderer.removeLogo(uuid)
-        context.commit('remove_logo', uuid)
+    remove_logo(context, { renderer, logo }) {
+        renderer.removeLogo(logo.uuid)
+        context.commit('remove_logo', logo)
     },
     async set_template(context, { renderer, index }) {
         // TODO move inside renderer

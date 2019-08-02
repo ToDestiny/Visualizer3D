@@ -45,21 +45,16 @@ export default {
                       data: e.target.result,
                       position: 0
                     }
-                    this.$store.dispatch('set_logo', { renderer: this.renderer, logo: new_image })
+                    this.$store.dispatch('set_logo', { renderer: this.renderer, logo: new_image, position: 0 })
                 };
                 reader.readAsDataURL(fl);
             }
         },
-        moveLogo (uuid) {
-          this.images[uuid].position = this.images[uuid].new_position
-          this.renderer.addFixedLogo(this.images[uuid].data,
-            uuid,
-            this.images[uuid].position)
+        moveLogo (image, position) {
+            this.$store.dispatch('set_logo', { renderer: this.renderer, logo: image, position })
         },
-        deleteImage(uuid) {
-          this.renderer.removeLogo(uuid)
-          delete this.images[uuid]
-          this.image_count = Object.keys(this.images).length
+        deleteImage(image) {
+            this.$store.dispatch('remove_logo', { renderer: this.renderer, logo: image })
         }
     }
 }

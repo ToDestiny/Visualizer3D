@@ -6,19 +6,18 @@
         <div class="inline-block" v-for="(img_info, k) in logos" :key="k">
             <div class="logo_container">
                 <img class="logo_thumb" :src="img_info.data" alt="Logo Preview" :ref="'img_' + k"/>
-                <button class="delete-button" @click.prevent.stop="deleteImage(k)">
+                <button class="delete-button" @click.prevent.stop="deleteImage(img_info)">
                     <font-awesome-icon icon="window-close"/>
                 </button>
             </div>
             <div>
                 {{ img_info.file.name.substring(0, 13) }}
             </div>
-            <!--
-            <select v-model.number="img_info.new_position" @change="moveLogo(uuid)">
-                <option v-for="(pos, index) in fixed_positions" v-bind:value="index">
+            <select :value="img_info.position" @change="moveLogo(img_info, $event.target.value)">
+                <option v-for="(pos, index) in positions" :key="index" :value="index">
                     {{ pos.name }}
                 </option>
-            </select>-->
+            </select>
         </div>
         <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
     </div>

@@ -142,6 +142,7 @@ export default class Renderer {
         console.warn("setTemplate stub called")
     }
     setLogo({ data, uuid, position }, resolve) {
+        console.log(position)
         if (uuid in this.fixed_logos) {
             this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
             this.fixed_logos[uuid].model.canvas.renderAll()
@@ -163,6 +164,13 @@ export default class Renderer {
                 resolve()
             })
         })
+    }
+    removeLogo(uuid) {
+        if (uuid in this.fixed_logos) {
+            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
+            this.fixed_logos[uuid].model.canvas.renderAll()
+            delete this.fixed_logos[uuid]
+        }
     }
     // TODO rewrite everything under this
     // ---------------------------------------------------------------------------------- //
@@ -188,13 +196,6 @@ export default class Renderer {
             left: config.left
         }
         return specs
-    }
-    removeLogo(uuid) {
-        if (uuid in this.fixed_logos) {
-            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.fixed_logos[uuid].model.canvas.renderAll()
-            delete this.fixed_logos[uuid]
-        }
     }
     renderLoop() {
         window.requestAnimationFrame(this.renderLoop.bind(this))
