@@ -79,10 +79,10 @@ export const actions = {
         context.commit('set_template', { index, colors })
     },
     async set_color(context, { renderer, index, color }) {
-        if (!context.state.model || !context.state.model.templates)
-             throw "Tried to set template color, but model is not initialized"
-        else if (!context.state.model.templates[index])
-            throw "Index specified doesn't correspond to a template or color"
+        if (!context.state.colors)
+             throw "Tried to set template color, but it's not initialized"
+        else if (!context.state.colors[index])
+            throw "Index specified doesn't correspond to a color slot"
         let colors = await renderer.setTemplateColor(index, color)
         context.commit('set_colors', colors)
     }

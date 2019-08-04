@@ -61,12 +61,12 @@
         {
             "name": "example1",
             "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
-            "colors_default": ["f00", "0f0", "00f"]
+            "colors_default": ["#f00", "#0f0", "#00f"]
         },
         {
             "name": "example2",
             "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
-            "colors_default": ["f00", "0f0"]
+            "colors_default": ["#f00", "#0f0"]
         }
     ]
 }

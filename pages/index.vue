@@ -18,6 +18,7 @@
                 <template-select :renderer="renderer" :active="active_panel == 'templates'"/>
                 <image-load :renderer="renderer" :active="active_panel == 'logos'"/>
                 <template-colors-list :renderer="renderer" :active="active_panel == 'colors'"/>
+                <select-color :renderer="renderer" :active="active_panel == 'select_color'"/>
             </div>
         </div>
     </section>
@@ -51,5 +52,18 @@
 }
 .tab-radio:checked + label {
     background: rgba(0, 0, 0, 0.2)
+}
+.color-container:hover {
+    cursor: pointer;
+}
+.color-box {
+    width: 5em;
+    height: 2em;
+}
+.color-btn {
+    display: none;
+}
+.hidden-radio {
+    display: none;
 }
 </style>
