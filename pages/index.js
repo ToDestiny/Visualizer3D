@@ -1,6 +1,7 @@
 
 import ImageLoad from '../components/image_load.vue'
 import TemplateSelect from '../components/template_select.vue'
+import TemplateColorsList from '../components/template_colors_list.vue'
 import Renderer from '../components/renderer/renderer.js'
 import { mapState } from 'vuex';
 
@@ -8,7 +9,8 @@ export default {
     name: 'App',
     components: {
         ImageLoad,
-        TemplateSelect
+        TemplateSelect,
+        TemplateColorsList
     },
     data () {
         return {

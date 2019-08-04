@@ -105,7 +105,7 @@ export default class Renderer {
         this.parts[index] = {obj: part, mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
         this.scene.add(part)
     }
-    loadModel(part_info, index, resolve, reject) {
+    loadPart(part_info, index, resolve, reject) {
         let obj_loader = new OBJLoader2()
         obj_loader.load(part_info.obj_file,
             (part) => {
@@ -124,9 +124,10 @@ export default class Renderer {
         this.model_info = model_info
         this.parts = []
         this.fixed_logos = {}
-        return Promise.all(this.model_info.parts.map((part, index) => {
-                return new Promise((resolve, reject) => this.loadModel(part, index, resolve, reject))
-            }))
+        let jobs = Promise.all(this.model_info.parts.map((part, index) => {
+            return new Promise((resolve, reject) => this.loadPart(part, index, resolve, reject))
+        })).then(() => { return this.setTemplate(0) })
+        return jobs
     }
     resetModel() {
         if (this.parts) {
@@ -140,6 +141,18 @@ export default class Renderer {
     setTemplate(index) {
         // TODO stub
         console.warn("setTemplate stub called")
+        this.template_index = index
+        let template = this.model_info.templates[this.template_index]
+        this.template_colors = [...template.colors_default]
+        return this.template_colors
+    }
+    setTemplateColor(index, color) {
+        // TODO color index or description?
+        // TODO stub
+        console.warn("setTemplateColor stub called")
+        this.template_colors = [...this.template_colors]
+        this.template_colors[index] = color
+        return this.template_colors
     }
     setLogo({ data, uuid, position }, resolve) {
         console.log(position)
@@ -172,21 +185,12 @@ export default class Renderer {
             delete this.fixed_logos[uuid]
         }
     }
+    renderLoop() {
+        window.requestAnimationFrame(this.renderLoop.bind(this))
+        this.renderer.render(this.scene, this.camera)
+    }
     // TODO rewrite everything under this
     // ---------------------------------------------------------------------------------- //
-    getTemplates() {
-        // STUB
-        return [
-            {
-                url: 't-shirt/first.jpg',
-                name: 'first'
-            },
-            {
-                url: 't-shirt/second.jpg',
-                name: 'second'
-            }
-        ]
-    }
     logoPositionToSpecs(position) {
         let config = (Renderer.getPositions(this.model_info))[position]
         let specs = {
@@ -196,10 +200,6 @@ export default class Renderer {
             left: config.left
         }
         return specs
-    }
-    renderLoop() {
-        window.requestAnimationFrame(this.renderLoop.bind(this))
-        this.renderer.render(this.scene, this.camera)
     }
     updateCollision() {
         let bounding_rect = this.renderer.domElement.getBoundingClientRect()
