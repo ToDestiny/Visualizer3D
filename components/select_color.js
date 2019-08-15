@@ -15,10 +15,15 @@ export default {
     },
     computed: {
         ...mapState({
-            focus: (state) => state.template_color_focus
+            focus: (state) => state.template_color_focus,
+            colors: (state) => state.colors
         }),
         color_selection: {
-            get() { return this.colors ? this.colors[focus] : null },
+            get() {
+                if (this.colors)
+                    console.log(this.colors[this.focus])
+                return this.colors ? this.colors[this.focus] : null
+            },
             set(value) {
                 this.$store.dispatch('set_color', { renderer: this.renderer, index: this.focus, color: value })
             }
