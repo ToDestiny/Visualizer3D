@@ -14,7 +14,9 @@ export const state = () => ({
     colors: [],
     logos: {},
     active_panel: "templates",
-    template_color_focus: 0
+    template_color_focus: 0,
+    text_name: "",
+    text_number: ""
 })
 
 export const mutations = {
@@ -43,6 +45,12 @@ export const mutations = {
     },
     template_color_focus(state, focus) {
         state.template_color_focus = focus
+    },
+    set_text_name(state, text) {
+        state.text_name = text
+    },
+    set_text_number(state, text) {
+        state.text_number = text
     }
 }
 
@@ -85,5 +93,13 @@ export const actions = {
             throw "Index specified doesn't correspond to a color slot"
         let colors = await renderer.setTemplateColor(index, color)
         context.commit('set_colors', colors)
+    },
+    set_text_name(context, { renderer, text }) {
+        renderer.setText(text, "name")
+        context.commit('set_text_name', text)
+    },
+    set_text_number(context, { renderer, text }) {
+        renderer.setText(text, "number")
+        context.commit('set_text_number', text)
     }
 }

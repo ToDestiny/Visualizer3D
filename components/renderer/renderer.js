@@ -3,11 +3,12 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
 import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
+import { TextRect } from './canvas_shapes/text.js';
 
 export default class Renderer {
     static getPositions(model_info) {
         // TODO add custom config
-        return model_info.fixed_logos
+        return model_info.logos
     }
     initThree(model) {
         const scene = new THREE.Scene()
@@ -123,10 +124,16 @@ export default class Renderer {
         this.resetModel()
         this.model_info = model_info
         this.parts = []
-        this.fixed_logos = {}
+        this.text_slots = {}
+        this.logos = {}
         let jobs = Promise.all(this.model_info.parts.map((part, index) => {
             return new Promise((resolve, reject) => this.loadPart(part, index, resolve, reject))
-        })).then(() => { return this.setTemplate(0) })
+        })).then(() => {
+            Object.keys(this.model_info.text_slots).forEach((key) => {
+                this.setText("", key)
+            })
+            return this.setTemplate(0)
+        })
         return jobs
     }
     resetModel() {
@@ -156,9 +163,9 @@ export default class Renderer {
     }
     setLogo({ data, uuid, position }, resolve) {
         console.log(position)
-        if (uuid in this.fixed_logos) {
-            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.fixed_logos[uuid].model.canvas.renderAll()
+        if (uuid in this.logos) {
+            this.logos[uuid].canvas.remove(this.logos[uuid].image)
+            this.logos[uuid].model.canvas.renderAll()
         }
         let specs = this.logoPositionToSpecs(position)
         return new Promise((resolve) => {
@@ -166,7 +173,7 @@ export default class Renderer {
                 image.scaleToWidth(specs.width)
                 image.top = specs.top
                 image.left = specs.left
-                this.fixed_logos[uuid] = {
+                this.logos[uuid] = {
                     image: image,
                     canvas: specs.model.canvas,
                     model: specs.model,
@@ -179,18 +186,45 @@ export default class Renderer {
         })
     }
     removeLogo(uuid) {
-        if (uuid in this.fixed_logos) {
-            this.fixed_logos[uuid].canvas.remove(this.fixed_logos[uuid].image)
-            this.fixed_logos[uuid].model.canvas.renderAll()
-            delete this.fixed_logos[uuid]
+        if (uuid in this.logos) {
+            this.logos[uuid].canvas.remove(this.logos[uuid].image)
+            this.logos[uuid].model.canvas.renderAll()
+            delete this.logos[uuid]
         }
     }
-    renderLoop() {
-        window.requestAnimationFrame(this.renderLoop.bind(this))
-        this.renderer.render(this.scene, this.camera)
+    setText(text, slot) {
+        if (this.text_slots[slot]) {
+            this.text_slots[slot].canvas.remove(this.text_slots[slot].text_rect)
+            this.text_slots[slot].canvas.renderAll()
+            delete this.text_slots[slot]
+        }
+        if (text) {
+            let specs = this.textSlotToSpecs(slot)
+            let text_rect = new TextRect(text, {
+                font_size: specs.font_size,
+                center_y: specs.center_y,
+                center_x: specs.center_x
+            })
+            this.text_slots[slot] = {
+                text_rect: text_rect,
+                model: specs.model,
+                canvas: specs.model.canvas
+            }
+            specs.model.canvas.add(text_rect)
+            specs.model.canvas.renderAll()
+        }
     }
-    // TODO rewrite everything under this
-    // ---------------------------------------------------------------------------------- //
+    textSlotToSpecs(slot) {
+        let config = this.model_info.text_slots[slot]
+        let specs = {
+            name: config.name,
+            model: this.parts.find((part) => part.mesh.name == config.part),
+            font_size: config.font_size,
+            center_x: config.center_x,
+            center_y: config.center_y
+        }
+        return specs
+    }
     logoPositionToSpecs(position) {
         let config = (Renderer.getPositions(this.model_info))[position]
         let specs = {
@@ -201,6 +235,12 @@ export default class Renderer {
         }
         return specs
     }
+    renderLoop() {
+        window.requestAnimationFrame(this.renderLoop.bind(this))
+        this.renderer.render(this.scene, this.camera)
+    }
+    // TODO rewrite everything under this
+    // ---------------------------------------------------------------------------------- //
     updateCollision() {
         let bounding_rect = this.renderer.domElement.getBoundingClientRect()
         let coords = {

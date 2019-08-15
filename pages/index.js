@@ -3,6 +3,7 @@ import ImageLoad from '../components/image_load.vue'
 import TemplateSelect from '../components/template_select.vue'
 import TemplateColorsList from '../components/template_colors_list.vue'
 import SelectColor from '../components/select_color.vue'
+import GeneralConfig from "../components/general_config.vue"
 import Renderer from '../components/renderer/renderer.js'
 import { mapState } from 'vuex';
 
@@ -12,7 +13,8 @@ export default {
         ImageLoad,
         TemplateSelect,
         TemplateColorsList,
-        SelectColor
+        SelectColor,
+        GeneralConfig
     },
     data () {
         return {

@@ -83,3 +83,4 @@ class Canvas extends Observable {
 export { Canvas }
 export { Rect } from "./canvas_shapes/rect.js"
 export { ImageRect } from "./canvas_shapes/image.js"
+export { TextRect } from "./canvas_shapes/text.js"

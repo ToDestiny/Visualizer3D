@@ -27,7 +27,7 @@
              "normal_map": null
         }
     ],
-    "fixed_logos": [
+    "logos": [
         {
             "name": "Top left large",
             "part": "front",
@@ -57,6 +57,22 @@
             "left": 1250
         }
     ],
+    "text_slots": {
+        "name": {
+            "name": "Player's Name Back",
+            "part": "back",
+            "font_size": 200,
+            "center_y": 300,
+            "center_x": 1000
+        },
+        "number": {
+            "name": "Player's Number Back",
+            "part": "back",
+            "font_size": 800,
+            "center_y": 800,
+            "center_x": 1000
+        }
+    },
     "templates": [
         {
             "name": "example1",

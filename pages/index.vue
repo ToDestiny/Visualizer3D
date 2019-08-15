@@ -11,14 +11,17 @@
                     <input class="tab-radio" type="radio" id="tab_0" value="templates" v-model="active_panel">
                     <label for="tab_0" class="tab-container">Templates</label>
                     <input class="tab-radio" type="radio" id="tab_1" value="logos" v-model="active_panel">
-                    <label for="tab_1" class="tab-container">Logs</label>
+                    <label for="tab_1" class="tab-container">Logos</label>
                     <input class="tab-radio" type="radio" id="tab_2" value="colors" v-model="active_panel">
                     <label for="tab_2" class="tab-container">Colors</label>
+                    <input class="tab-radio" type="radio" id="tab_3" value="config" v-model="active_panel">
+                    <label for="tab_3" class="tab-container">Config</label>
                 </div>
                 <template-select :renderer="renderer" :active="active_panel == 'templates'"/>
                 <image-load :renderer="renderer" :active="active_panel == 'logos'"/>
                 <template-colors-list :renderer="renderer" :active="active_panel == 'colors'"/>
                 <select-color :renderer="renderer" :active="active_panel == 'select_color'"/>
+                <general-config :renderer="renderer" :active="active_panel == 'config'"/>
             </div>
         </div>
     </section>
