@@ -25,36 +25,91 @@
             "obj_file": "t-shirt/sleeve_right.obj",
             "color_map": null,
              "normal_map": null
+        },
+        {
+            "name": "collar",
+            "obj_file": "t-shirt/collar.obj",
+            "color_map": null,
+             "normal_map": null
         }
     ],
     "logos": [
         {
             "name": "Top left large",
             "part": "front",
-            "width": 500,
-            "top": 450,
-            "left": 450
+            "width": 350,
+            "center_y": 550,
+            "center_x": 850
         },
         {
             "name": "Top left small",
             "part": "front",
             "width": 200,
-            "top": 520,
-            "left": 520
+            "center_y": 550,
+            "center_x": 850
+        },
+        {
+            "name": "Top right large",
+            "part": "front",
+            "width": 350,
+            "center_y": 550,
+            "center_x": 1198
+        },
+        {
+            "name": "Top right small",
+            "part": "front",
+            "width": 200,
+            "center_y": 550,
+            "center_x": 1198
         },
         {
             "name": "Bottom right large",
             "part": "front",
-            "width": 500,
-            "top": 1300,
-            "left": 1100
+            "width": 550,
+            "center_y": 1400,
+            "center_x": 1198
         },
         {
             "name": "Bottom right small",
             "part": "front",
             "width": 200,
-            "top": 1450,
-            "left": 1250
+            "center_y": 1400,
+            "center_x": 1198
+        },
+        {
+            "name": "Bottom left large",
+            "part": "front",
+            "width": 550,
+            "center_y": 1400,
+            "center_x": 850
+        },
+        {
+            "name": "Bottom left small",
+            "part": "front",
+            "width": 200,
+            "center_y": 1400,
+            "center_x": 850
+        },
+        {
+            "name": "Bottom right large",
+            "part": "front",
+            "width": 550,
+            "center_y": 1400,
+            "center_x": 1100
+        },
+        {
+            "name": "Bottom right small",
+            "part": "front",
+            "width": 200,
+            "center_y": 1450,
+            "center_x": 1250
+        },
+        {
+            "name": "Back bottom small",
+            "part": "back",
+            "width": 250,
+            "center_y": 1550,
+            "center_x": 1024
         }
     ],
     "text_slots": {
@@ -62,15 +117,15 @@
             "name": "Player's Name Back",
             "part": "back",
             "font_size": 200,
-            "center_y": 300,
-            "center_x": 1000
+            "center_y": 350,
+            "center_x": 1024
         },
         "number": {
             "name": "Player's Number Back",
             "part": "back",
             "font_size": 800,
             "center_y": 800,
-            "center_x": 1000
+            "center_x": 1024
         }
     },
     "templates": [

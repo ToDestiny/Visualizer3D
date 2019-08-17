@@ -68,7 +68,8 @@ export default class Renderer {
         canvas.on("mouse:down", (event) => {
             console.log(event)
         })
-        canvas.add(new UvCanvas.Rect({width: 2048, height: 2048, fill: 'grey'}))
+        canvas.add(new UvCanvas.Rect(
+            {center_x: 1024, center_y: 1024, width: 2048, height: 2048, fill: 'grey'}))
         canvas.renderAll()
         /*if (color_map) {
             fabric.Image.fromURL(
@@ -82,12 +83,11 @@ export default class Renderer {
         }*/
     }
     setupPart(part, part_info, index) {
-        const factor = 1
+        const factor = 0.04
         let name = part_info.name
         let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
         let canvas_texture = new THREE.Texture(canvas.canvas_element)
         this.setupCanvas(canvas, canvas_texture)
-
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
             /* TODO normal map */
@@ -95,6 +95,7 @@ export default class Renderer {
             side: THREE.DoubleSide})
         let mesh
         part.scale.multiplyScalar(factor)
+        part.position.add(new THREE.Vector3(0, -0.8, 0))
         part.traverse((child) => {
             if (child instanceof THREE.Mesh) {
                 mesh = child
@@ -171,8 +172,8 @@ export default class Renderer {
         return new Promise((resolve) => {
             UvCanvas.ImageRect.fromURL(data, (image) => {
                 image.scaleToWidth(specs.width)
-                image.top = specs.top
-                image.left = specs.left
+                image.center_y = specs.center_y
+                image.center_x = specs.center_x
                 this.logos[uuid] = {
                     image: image,
                     canvas: specs.model.canvas,
@@ -230,8 +231,8 @@ export default class Renderer {
         let specs = {
             model: this.parts.find((part) => part.mesh.name == config.part),
             width: config.width,
-            top: config.top,
-            left: config.left
+            center_y: config.center_y,
+            center_x: config.center_x
         }
         return specs
     }

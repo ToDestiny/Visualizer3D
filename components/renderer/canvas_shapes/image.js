@@ -20,8 +20,8 @@ export class ImageRect {
         this.width = this.width || this.img_el.width
         this.height = this.height || this.img_el.height
         this.angle = this.angle || 0
-        this.top = this.top || 0
-        this.left = this.left || 0
+        this.center_y = this.center_y || 0
+        this.center_x = this.center_x || 0
         this.fill = this.fill || "black"
     }
     _doDraw(ctx) {
@@ -36,8 +36,8 @@ export class ImageRect {
     }
     getCenterPoint() {
         return {
-            x: this.left + (this.width / 2),
-            y: this.top + (this.height / 2)
+            x: this.center_x,
+            y: this.center_y
         }
     }
     calcTranslationMatrix() {
