@@ -1,12 +1,13 @@
 import { to_radians, multiply_matrices } from "../util.js"
 
 export class ImageRect {
-    static fromURL(url, callback, options) {
+    static fromURL(url, success_callback, options, failure_callback) {
         let img_el = new Image()
         img_el.onload = function () {
             let img_object = new ImageRect(img_el, options)
-            callback(img_object)
+            success_callback(img_object)
         }
+        img_el.onerror = failure_callback
         img_el.src = url
     }
     constructor(img_el, options) {

@@ -5,6 +5,12 @@ import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
 import { TextRect } from './canvas_shapes/text.js';
 
+function format(str, obj) {
+    return str.replace(/\{\s*([^}\s]+)\s*\}/g, function(m, p1, offset, string) {
+        return obj[p1]
+    })
+}
+
 export default class Renderer {
     static getPositions(model_info) {
         // TODO add custom config
@@ -68,19 +74,6 @@ export default class Renderer {
         canvas.on("mouse:down", (event) => {
             console.log(event)
         })
-        canvas.add(new UvCanvas.Rect(
-            {center_x: 1024, center_y: 1024, width: 2048, height: 2048, fill: 'grey'}))
-        canvas.renderAll()
-        /*if (color_map) {
-            fabric.Image.fromURL(
-                color_map,
-                (img) => {
-                    img.scaleToWidth(2048)
-                    canvas.add(img)
-                    canvas.renderAll()
-                }
-            )
-        }*/
     }
     setupPart(part, part_info, index) {
         const factor = 0.04
@@ -104,7 +97,13 @@ export default class Renderer {
             }
         })
         //part.position.y = -0.25
-        this.parts[index] = {obj: part, mesh: mesh, canvas: canvas, canvas_texture: canvas_texture}
+        this.parts[index] = {
+            obj: part,
+            mesh: mesh,
+            canvas: canvas,
+            canvas_texture: canvas_texture,
+            template_objs: []
+        }
         this.scene.add(part)
     }
     loadPart(part_info, index, resolve, reject) {
@@ -121,9 +120,21 @@ export default class Renderer {
             },
             null, true)
     }
+    setupTemplateSpec(templ) {
+        let color_mask_spec = templ.color_masks
+        templ.color_masks = {}
+        this.model_info.parts.forEach((part) => {
+            let part_masks = templ.colors_default.map(
+                (color, color_idx) => format(color_mask_spec, [color_idx, part.name]))
+            templ.color_masks[part.name] = part_masks
+        })
+    }
     setModel(model_info) {
         this.resetModel()
         this.model_info = model_info
+        this.model_info.templates.forEach(this.setupTemplateSpec.bind(this))
+        // TODO remove
+        console.log(this.model_info)
         this.parts = []
         this.text_slots = {}
         this.logos = {}
@@ -133,9 +144,7 @@ export default class Renderer {
             Object.keys(this.model_info.text_slots).forEach((key) => {
                 this.setText("", key)
             })
-            return this.setTemplate(0)
-        })
-        return jobs
+        }).then(() => this.setTemplate(0))
     }
     resetModel() {
         if (this.parts) {
@@ -146,20 +155,81 @@ export default class Renderer {
             this.parts = []
         }
     }
-    setTemplate(index) {
-        // TODO stub
+    _clearTemplateCanvas(part_index, color_index, update=true) {
+        if (color_index == undefined)
+            this.parts[part_index].template_objs.forEach((obj) => {
+                this.parts[part_index].canvas.remove(obj)
+            })
+        else
+            this.parts[part_index].canvas.remove(this.parts[part_index].template_objs[color_index])
+        if (update)
+            this.parts[name].canvas.renderAll()
+    }
+    _addTemplateImg(img, part_index, color_index) {
+        this.parts[part_index].template_objs[color_index] = img
+        this.parts[part_index].canvas.add(img)
+    }
+    _makeBackgroundOptions(color_index) {
+        return {
+            fill: this.template_colors[color_index],
+            center_x: 1024,
+            center_y: 1024,
+            width: 2048,
+            height: 2048
+        }
+    }
+    _makeTemplateLoadPromise(color_mask_url, part_index, color_index) {
+        return new Promise((resolve, reject) => {
+            UvCanvas.ImageRect.fromURL(color_mask_url,
+                (img) => {
+                    if (img) {
+                        this._addTemplateImg(img, part_index, color_index, resolve)
+                        resolve(img)
+                    }
+                    else
+                        reject("Error loading template")
+                },
+                this._makeBackgroundOptions(color_index),
+                () => reject("Error loading template"))
+        })
+    }
+    _updateTemplatePart(part_index, color_index) {
+        if (this.parts[part_index].template_objs)
+            this._clearTemplateCanvas(part_index, color_index, false)
+        let selected = this.model_info.templates[this.template_index]
+        let name = this.parts[part_index].mesh.name
+        if (color_index == undefined)
+            return selected.color_masks[name].map(
+                (color_mask_url, index) => this._makeTemplateLoadPromise(color_mask_url, part_index, index))
+        else
+            return [this._makeTemplateLoadPromise(selected.color_masks[name][color_index], part_index, color_index)]
+    }
+    _updateTemplate(color_index) {
+        let promises = []
+        this.parts.forEach((part, part_index) => {
+            promises.push(...this._updateTemplatePart(part_index, color_index))
+        })
+        return Promise.all(promises).then(() => {
+            this.parts.forEach((part) => part.canvas.renderAll())
+        }).catch((err) => console.err(err.message))
+    }
+    async setTemplate(index) {
+        // TODO make sure it works
+        // TODO this is now async, maybe need to update store function
         console.warn("setTemplate stub called")
         this.template_index = index
         let template = this.model_info.templates[this.template_index]
         this.template_colors = [...template.colors_default]
+        await this._updateTemplate()
         return this.template_colors
     }
-    setTemplateColor(index, color) {
+    async setTemplateColor(color_index, color) {
         // TODO color index or description?
-        // TODO stub
+        // TODO raise if no template is initialized
         console.warn("setTemplateColor stub called")
         this.template_colors = [...this.template_colors]
-        this.template_colors[index] = color
+        this.template_colors[color_index] = color
+        await this._updateTemplate(color_index)
         return this.template_colors
     }
     setLogo({ data, uuid, position }, resolve) {
@@ -169,21 +239,25 @@ export default class Renderer {
             this.logos[uuid].model.canvas.renderAll()
         }
         let specs = this.logoPositionToSpecs(position)
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             UvCanvas.ImageRect.fromURL(data, (image) => {
-                image.scaleToWidth(specs.width)
-                image.center_y = specs.center_y
-                image.center_x = specs.center_x
-                this.logos[uuid] = {
-                    image: image,
-                    canvas: specs.model.canvas,
-                    model: specs.model,
-                    position: position
+                if (image) {
+                    image.scaleToWidth(specs.width)
+                    image.center_y = specs.center_y
+                    image.center_x = specs.center_x
+                    this.logos[uuid] = {
+                        image: image,
+                        canvas: specs.model.canvas,
+                        model: specs.model,
+                        position: position
+                    }
+                    specs.model.canvas.add(image)
+                    specs.model.canvas.renderAll()
+                    resolve(image)
                 }
-                specs.model.canvas.add(image)
-                specs.model.canvas.renderAll()
-                resolve()
-            })
+                else
+                    reject("Error loading logo")
+            }, {}, () => reject("Error loading logo"))
         })
     }
     removeLogo(uuid) {

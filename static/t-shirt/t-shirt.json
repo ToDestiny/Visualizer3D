@@ -131,12 +131,14 @@
     "templates": [
         {
             "name": "example1",
-            "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
-            "colors_default": ["#f00", "#0f0", "#00f"]
+            "thumb_url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
+            "color_masks": "t-shirt/templates/template1/mask{0}_{1}.png",
+            "colors_default": ["#f00"]
         },
         {
             "name": "example2",
-            "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
+            "thumb_url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
+            "color_masks": "t-shirt/templates/template2/mask{0}_{1}.png",
             "colors_default": ["#f00", "#0f0"]
         }
     ]
