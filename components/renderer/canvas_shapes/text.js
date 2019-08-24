@@ -26,7 +26,6 @@ export class TextRect {
             this.font_family
         ].join(' ')
         ctx.textBaseline = "middle"
-        console.log(ctx.textBaseline)
     }
     _getMeasuringContext() {
         let ctx = document.createElement("canvas").getContext("2d")
@@ -35,8 +34,7 @@ export class TextRect {
     }
     _doDraw(ctx) {
         let size = this.measureText(ctx)
-        console.log(size)
-        console.log(-(size.width / 2), -(size.height / 2))
+        ctx.fillStyle = this.fill
         ctx.fillText(this.text, -(size.width / 2), 0/*-(size.height / 2)*/)
     }
     _render(ctx) {

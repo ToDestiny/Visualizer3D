@@ -20,8 +20,6 @@ export default {
         }),
         color_selection: {
             get() {
-                if (this.colors)
-                    console.log(this.colors[this.focus])
                 return this.colors ? this.colors[this.focus] : null
             },
             set(value) {

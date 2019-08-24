@@ -233,7 +233,6 @@ export default class Renderer {
         return this.template_colors
     }
     setLogo({ data, uuid, position }, resolve) {
-        console.log(position)
         if (uuid in this.logos) {
             this.logos[uuid].canvas.remove(this.logos[uuid].image)
             this.logos[uuid].model.canvas.renderAll()
