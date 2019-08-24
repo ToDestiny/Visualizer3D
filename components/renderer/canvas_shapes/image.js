@@ -28,6 +28,11 @@ export class ImageRect {
         this.fill = this.fill || ""
         this.color_compositing = this.color_compositing || "source-in"
     }
+    _getSimpleContext() {
+        let canvas = document.createElement("canvas")
+        let ctx = canvas.getContext("2d")
+        return { canvas, ctx }
+    }
     _doDraw(ctx) {
         ctx.drawImage(this.subcanvas_element, -(this.width / 2), -(this.height / 2), this.width, this.height)
     }
@@ -92,5 +97,12 @@ export class ImageRect {
         if (this.height === 0 && new_height != 0)
             throw "height is 0, no constant is going scale it up to argument"
         this.scale(new_height / this.height)
+    }
+    getBase64() {
+        let simple = this._getSimpleContext()
+        simple.canvas.width = this.width
+        simple.canvas.height = this.height
+        simple.ctx.drawImage(this.img_el, 0, 0, this.width, this.height)
+        return simple.canvas.toDataURL()
     }
 }

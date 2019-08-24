@@ -21,7 +21,11 @@ export default {
             renderer: null,
         }
     },
-    methods: {},
+    methods: {
+        log(obj) {
+            console.log(JSON.stringify(obj))
+        }
+    },
     computed: {
         active_panel: {
             get() { return this.$store.state.active_panel },
@@ -31,11 +35,7 @@ export default {
         }
     },
     mounted () {
-        if (!this.$store.state.initialized) {
-            this.renderer = new Renderer(this.$refs.rendererContainer)
-            this.$store.dispatch('initialize', { renderer: this.renderer, model_url: 't-shirt/t-shirt.json' })
-        }
-        else
-            console.log('keeping renderer')
+        this.renderer = new Renderer(this.$refs.rendererContainer)
+        this.$store.dispatch('initialize', { renderer: this.renderer, model_url: 't-shirt/t-shirt.json' })
   },
 }

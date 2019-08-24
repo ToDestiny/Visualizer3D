@@ -61,33 +61,30 @@ export default class Renderer {
         this.view_angle = 75
         this.initThree()
     }
-    setupCanvas(canvas, canvas_texture, color_map = null) {
+    setupCanvas(canvas, canvas_texture, color_map) {
         canvas.on("after:render", () => {
             canvas_texture.needsUpdate = true
         })
         canvas.on("mouse:down", (event) => {
             console.log(event)
         })
-        canvas.add(new UvCanvas.Rect(
-            {center_x: 1024, center_y: 1024, width: 2048, height: 2048, fill: 'grey'}))
+        console.log(color_map)
+        UvCanvas.ImageRect.fromURL(
+            color_map,
+            (img) => {
+                img.scaleToWidth(4096),
+                canvas.add(img)
+                canvas.renderAll()
+            }
+        )
         canvas.renderAll()
-        /*if (color_map) {
-            fabric.Image.fromURL(
-                color_map,
-                (img) => {
-                    img.scaleToWidth(2048)
-                    canvas.add(img)
-                    canvas.renderAll()
-                }
-            )
-        }*/
     }
     setupPart(part, part_info, index) {
         const factor = 0.04
         let name = part_info.name
         let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
         let canvas_texture = new THREE.Texture(canvas.canvas_element)
-        this.setupCanvas(canvas, canvas_texture)
+        this.setupCanvas(canvas, canvas_texture, part_info.color_map)
         let material = new THREE.MeshPhongMaterial({color: 0xffffff,
             map: canvas_texture,
             /* TODO normal map */
@@ -155,6 +152,7 @@ export default class Renderer {
         return this.template_colors
     }
     setTemplateColor(index, color) {
+        // TODO add optional set_func argument
         // TODO color index or description?
         // TODO stub
         console.warn("setTemplateColor stub called")
@@ -163,7 +161,6 @@ export default class Renderer {
         return this.template_colors
     }
     setLogo({ data, uuid, position }, resolve) {
-        console.log(position)
         if (uuid in this.logos) {
             this.logos[uuid].canvas.remove(this.logos[uuid].image)
             this.logos[uuid].model.canvas.renderAll()
@@ -235,6 +232,32 @@ export default class Renderer {
             center_x: config.center_x
         }
         return specs
+    }
+    getConfig() {
+        return {
+            model_name: this.model_info.name,
+            version: this.model_info.version,
+            logos: Object.keys(this.logos).map((key) => ({
+                data: this.logos[key].image.getBase64(),
+                position: this.logos[key].position,
+                uuid: key
+            })),
+            text: Object.keys(this.text_slots).map((key) => ({
+                text: this.text_slots[key].text_rect.text,
+                slot: key
+            })),
+            template_index: this.template_index,
+            template_colors: this.template_colors
+        }
+    }
+    loadConfig(config) {
+        // TODO use inside of store action
+        if (config.model_name != this.model_info.name || config.version || this.model_info.version)
+            throw "Loading a config with a different model is not supperted. TODO (?)"
+        config.logos.forEach((logo) => this.setLogo(logo))
+        config.text.forEach((text) => this.setText(text.text, text.slot))
+        this.setTemplate(config.template_index)
+        config.template_colors.forEach((color, index) => this.setTemplateColor(index, color))
     }
     renderLoop() {
         window.requestAnimationFrame(this.renderLoop.bind(this))

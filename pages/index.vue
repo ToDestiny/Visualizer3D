@@ -24,6 +24,9 @@
                 <general-config :renderer="renderer" :active="active_panel == 'config'"/>
             </div>
         </div>
+        <button @click="log(renderer.getConfig())">
+            Add to favorites
+        </button>
     </section>
 </template>
 
