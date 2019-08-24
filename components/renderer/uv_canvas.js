@@ -10,8 +10,7 @@ class Canvas extends Observable {
         }
         this._parseOptions(options)
         this.context = this.canvas_element.getContext("2d")
-        this._objects = []
-
+        this._objects = {}
         this.pointer = {
             x: 0,
             y: 0
@@ -64,17 +63,26 @@ class Canvas extends Observable {
         this.canvas_element.width = this.width
         this.canvas_element.height = this.height
     }
-    add(obj) {
-        this._objects.push(obj)
+    add(obj, priority=0) {
+        if (!(priority in this._objects))
+            this._objects[priority] = []
+        this._objects[priority].push(obj)
     }
     remove(obj) {
-        let i = this._objects.findIndex((candidate) => obj === candidate)
-        delete this._objects[i]
+        Object.keys(this._objects).forEach((p) => {
+            let obj_i = this._objects[p].findIndex((candidate) => obj === candidate)
+            if (obj_i >= 0)
+                delete this._objects[p][obj_i]
+            if (!this._objects[p])
+                delete this._objects[p]
+        })
     }
     renderAll() {
         this.fire("before:render")
-        this._objects.forEach((obj) => {
-            obj._render(this.context)
+        let priority_levels = Object.keys(this._objects)
+        priority_levels.sort()
+        priority_levels.forEach((p) => {
+            this._objects[p].forEach((obj) => obj._render(this.context))
         })
         this.fire("after:render")
     }

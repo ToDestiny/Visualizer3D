@@ -167,7 +167,7 @@ export default class Renderer {
     }
     _addTemplateImg(img, part_index, color_index) {
         this.parts[part_index].template_objs[color_index] = img
-        this.parts[part_index].canvas.add(img)
+        this.parts[part_index].canvas.add(img, 0)
     }
     _makeBackgroundOptions(color_index) {
         return {
@@ -211,7 +211,7 @@ export default class Renderer {
         })
         return Promise.all(promises).then(() => {
             this.parts.forEach((part) => part.canvas.renderAll())
-        }).catch((err) => console.err(err.message))
+        }).catch((err) => console.error(err.message))
     }
     async setTemplate(index) {
         // TODO make sure it works
@@ -251,7 +251,7 @@ export default class Renderer {
                         model: specs.model,
                         position: position
                     }
-                    specs.model.canvas.add(image)
+                    specs.model.canvas.add(image, 2)
                     specs.model.canvas.renderAll()
                     resolve(image)
                 }
@@ -285,7 +285,7 @@ export default class Renderer {
                 model: specs.model,
                 canvas: specs.model.canvas
             }
-            specs.model.canvas.add(text_rect)
+            specs.model.canvas.add(text_rect, 1)
             specs.model.canvas.renderAll()
         }
     }
