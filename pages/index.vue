@@ -1,7 +1,7 @@
 <template>
     <section class="container">
         <h1 class="title">
-            Test BLK
+            Visualizer
         </h1>
         <div class="d-flex flex-row align-items-start">
             <div ref="rendererContainer"/>

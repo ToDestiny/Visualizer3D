@@ -62,10 +62,16 @@ export default class Renderer {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 800 // window.innerWidth
-        this.height = 600 // window.innerHeight
+        this.width = 1000 // window.innerWidth
+        this.height = 800 // window.innerHeight
         this.view_angle = 75
         this.initThree()
+        var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
+        bebas_font.load()
+        .then(() => {
+            document.fonts.add(bebas_font)
+        })
+        .catch((e) => console.error(e.message))
     }
     setupCanvas(canvas, canvas_texture, color_map = null) {
         canvas.on("after:render", () => {
@@ -94,6 +100,7 @@ export default class Renderer {
                 mesh = child
                 child.name = name
                 child.material = material
+                child.position.add(new THREE.Vector3(0, -5, 0))
             }
         })
         //part.position.y = -0.25
@@ -129,22 +136,41 @@ export default class Renderer {
             templ.color_masks[part.name] = part_masks
         })
     }
+    setupFixedLogos() {
+        this.model_info.fixed_logos.forEach((logo) => {
+            let model = this.parts.find((part) => part.mesh.name == logo.part)
+            return new Promise((resolve, reject) => {
+                UvCanvas.ImageRect.fromURL(logo.url, (image) => {
+                    if (image) {
+                        image.scaleToWidth(logo.width)
+                        image.center_y = logo.center_y
+                        image.center_x = logo.center_x
+                        model.canvas.add(image, 2)
+                        model.canvas.renderAll()
+                        resolve(image)
+                    }
+                    else
+                        reject("Error loading logo")
+                }, {}, () => reject("Error loading logo"))
+            })
+        })
+    }
     setModel(model_info) {
         this.resetModel()
         this.model_info = model_info
         this.model_info.templates.forEach(this.setupTemplateSpec.bind(this))
-        // TODO remove
-        console.log(this.model_info)
         this.parts = []
         this.text_slots = {}
         this.logos = {}
-        let jobs = Promise.all(this.model_info.parts.map((part, index) => {
+        let load_parts_jobs = Promise.all(this.model_info.parts.map((part, index) => {
             return new Promise((resolve, reject) => this.loadPart(part, index, resolve, reject))
-        })).then(() => {
+        }))
+        return load_parts_jobs.then(() => {
             Object.keys(this.model_info.text_slots).forEach((key) => {
                 this.setText("", key)
             })
-        }).then(() => this.setTemplate(0))
+        }).then(this.setupFixedLogos.bind(this))
+        .then(() => this.setTemplate(0))
     }
     resetModel() {
         if (this.parts) {
@@ -250,7 +276,7 @@ export default class Renderer {
                         model: specs.model,
                         position: position
                     }
-                    specs.model.canvas.add(image, 2)
+                    specs.model.canvas.add(image, 1)
                     specs.model.canvas.renderAll()
                     resolve(image)
                 }
@@ -276,6 +302,8 @@ export default class Renderer {
             let specs = this.textSlotToSpecs(slot)
             let text_rect = new TextRect(text, {
                 font_size: specs.font_size,
+                font_family: "Bebas Neue",
+                fill: "white",
                 center_y: specs.center_y,
                 center_x: specs.center_x
             })
