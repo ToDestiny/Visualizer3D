@@ -13,8 +13,6 @@ export const state = () => ({
     template_selection: null,
     colors: [],
     logos: {},
-    active_panel: "templates",
-    template_color_focus: 0,
     text_name: "",
     text_number: ""
 })
@@ -39,12 +37,6 @@ export const mutations = {
     },
     set_colors(state, colors) {
         state.colors = colors
-    },
-    select_panel(state, panel) {
-        state.active_panel = panel
-    },
-    template_color_focus(state, focus) {
-        state.template_color_focus = focus
     },
     set_text_name(state, text) {
         state.text_name = text

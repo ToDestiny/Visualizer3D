@@ -4,33 +4,49 @@
     "parts": [
         {
             "name": "front",
-            "obj_file": "t-shirt/front.obj",
+            "obj_file": "/t-shirt/front.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "back",
-            "obj_file": "t-shirt/back.obj",
+            "obj_file": "/t-shirt/back.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_left",
-            "obj_file": "t-shirt/sleeve_left.obj",
+            "obj_file": "/t-shirt/sleeve_left.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_right",
-            "obj_file": "t-shirt/sleeve_right.obj",
+            "obj_file": "/t-shirt/sleeve_right.obj",
             "color_map": null,
              "normal_map": null
         },
         {
             "name": "collar",
-            "obj_file": "t-shirt/collar.obj",
+            "obj_file": "/t-shirt/collar.obj",
             "color_map": null,
              "normal_map": null
+        }
+    ],
+    "fixed_logos": [
+        {
+            "url": "/mythlogo.svg",
+            "part": "front",
+            "width": 250,
+            "center_y": 450,
+            "center_x": 850
+        },
+        {
+            "url": "/sticker.svg",
+            "part": "front",
+            "width": 100,
+            "center_y": 1800,
+            "center_x": 750
         }
     ],
     "logos": [
@@ -110,20 +126,27 @@
             "width": 250,
             "center_y": 1550,
             "center_x": 1024
+        },
+        {
+            "name": "Front Center",
+            "part": "front",
+            "width": 700,
+            "center_y": 800,
+            "center_x": 1024
         }
     ],
     "text_slots": {
         "name": {
             "name": "Player's Name Back",
             "part": "back",
-            "font_size": 200,
+            "font_size": 170,
             "center_y": 350,
             "center_x": 1024
         },
         "number": {
             "name": "Player's Number Back",
             "part": "back",
-            "font_size": 800,
+            "font_size": 600,
             "center_y": 800,
             "center_x": 1024
         }
@@ -131,13 +154,15 @@
     "templates": [
         {
             "name": "example1",
-            "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
-            "colors_default": ["#f00", "#0f0", "#00f"]
+            "thumb_url": "/t-shirt/templates/template1/thumb.png",
+            "color_masks": "/t-shirt/templates/template1/mask{0}_{1}.png",
+            "colors_default": ["#000000", "#ffffff", "#000000"]
         },
         {
             "name": "example2",
-            "url": "https://ae01.alicdn.com/kf/HTB1Ix9uRpXXXXXIXpXXq6xXFXXX5/2017-Brand-Design-Men-s-Sports-Short-Sleeve-Running-T-shirts-Dry-Fit-T-shirt-Men.jpg_640x640.jpg",
-            "colors_default": ["#f00", "#0f0"]
+            "thumb_url": "/t-shirt/templates/template2/thumb.png",
+            "color_masks": "/t-shirt/templates/template2/mask{0}_{1}.png",
+            "colors_default": ["#ffffff", "#000000"]
         }
     ]
 }

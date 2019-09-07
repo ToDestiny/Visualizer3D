@@ -1,75 +1,117 @@
 <template>
     <section class="container">
-        <h1 class="title">
-            Test BLK
-        </h1>
-        <div class="d-flex flex-row align-items-start">
-            <div ref="rendererContainer"/>
-            <div class="d-block">
-                <div class="d-flex flex-row align-items-start">
-                    <!-- tabs -->
-                    <input class="tab-radio" type="radio" id="tab_0" value="templates" v-model="active_panel">
-                    <label for="tab_0" class="tab-container">Templates</label>
-                    <input class="tab-radio" type="radio" id="tab_1" value="logos" v-model="active_panel">
-                    <label for="tab_1" class="tab-container">Logos</label>
-                    <input class="tab-radio" type="radio" id="tab_2" value="colors" v-model="active_panel">
-                    <label for="tab_2" class="tab-container">Colors</label>
-                    <input class="tab-radio" type="radio" id="tab_3" value="config" v-model="active_panel">
-                    <label for="tab_3" class="tab-container">Config</label>
-                </div>
-                <template-select :renderer="renderer" :active="active_panel == 'templates'"/>
-                <image-load :renderer="renderer" :active="active_panel == 'logos'"/>
-                <template-colors-list :renderer="renderer" :active="active_panel == 'colors'"/>
-                <select-color :renderer="renderer" :active="active_panel == 'select_color'"/>
-                <general-config :renderer="renderer" :active="active_panel == 'config'"/>
+        <!--h1 class="title">
+            Visualizer
+        </h1-->
+        <div class="sidebar">
+            <img src="/mythlogo.svg" class="myth-logo">
+            <div class="d-flex flex-column align-items-start">
+                <!-- tabs -->
+                <nuxt-link class="tab-label" to="/design">Design</nuxt-link>
+                <transition-group name="expand" class="d-flex flex-column align-items-start">
+                    <nuxt-link v-show="route_matches('/design')" class="tab-label-sub" to="/design/template_select" key="template_select">Template</nuxt-link>
+                    <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" :to="'/design/colors/' + index"
+                        v-for="(color, index) in colors" :key="'color_' + index">Color {{index + 1}}</nuxt-link>
+                </transition-group>
+                <nuxt-link class="tab-label" to="/logos">Logos</nuxt-link>
+                <nuxt-link class="tab-label" to="/text">Text</nuxt-link>
             </div>
         </div>
-        <button @click="log(renderer.getConfig())">
-            Add to favorites
-        </button>
+        <nuxt-child class="config-container" :renderer="renderer"/>
+        <div class="renderer-container" ref="rendererContainer"/>
     </section>
 </template>
 
 <script src="./index.js"></script>
 
 <style>
+@font-face {
+  font-family: Bebas Neue;
+  src: url("/fonts/BebasNeue-Regular.woff2");
+}
+.myth-logo {
+    margin: 0 0 20px 20px;
+    max-width: 200px;
+}
 .container {
     max-width: 100%
 }
-.tab-content {
-    background-color: rgb(219, 219, 219);
-    border-radius: 20px 20px 20px 20px;
-    padding-bottom: 25px;
-    padding-top: 25px;
-    height: 100%px;
-}
-.config-panel {
-    width: 30em;
-    height: 40em;
-}
-.tab-container {
-
-}
-.tab-container:hover {
-    cursor: pointer;
-}
-.tab-radio {
-    display: none;
-}
-.tab-radio:checked + label {
-    background: rgba(0, 0, 0, 0.2)
-}
-.color-container:hover {
-    cursor: pointer;
-}
-.color-box {
-    width: 5em;
-    height: 2em;
-}
-.color-btn {
-    display: none;
-}
 .hidden-radio {
     display: none;
+}
+a, a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.tab-label {
+    font-family: Bebas Neue;
+    font-size: 2em;
+    line-height: 1.8em;
+    padding: 0 200px 0 10px;
+    max-width: 200px;
+    margin: 0.10em 0;
+    color: black;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+.tab-label-sub {
+   font-family: Bebas Neue;
+    font-size: 1.5em;
+    line-height: 1.80em;
+    padding: 0 170px 0 10px;
+    max-width: 180px;
+    margin: 0 30px;
+    color: black;
+    border-radius: 10px;
+}
+.expand-enter-active,
+.expand-leave-active {
+    transition: max-height 0.15s ease-in-out;
+    overflow: hidden;
+}
+.expand-enter-active {
+    max-height: 1.80em;
+}
+.expand-enter,
+.expand-leave-active {
+    max-height: 0;
+}
+.expand-leave {
+    max-height: 1.80em;
+}
+.tab-label.nuxt-link-active, .tab-label-sub.nuxt-link-active  {
+    color: white;
+    background-color: red;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    padding-top: 50px;
+    padding-left: 30px;
+    border-style: solid;
+    border-image:
+        linear-gradient(
+            to right,
+            rgba(0, 0, 0, 0.4),
+            rgba(0, 0, 0, 0)
+        ) 1 100% / 0 10px 0 0;
+}
+.config-container {
+    position: fixed;
+    left: 20vw;
+    top: 20vh;
+    width: 550px;
+    height: 550px;
+    background-color: lightgrey;
+}
+.renderer-container {
+    position: fixed;
+    left: 50vw;
+    top: 20vh;
+    width: 550px;
+    height: 550px;
 }
 </style>
