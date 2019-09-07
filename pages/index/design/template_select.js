@@ -12,7 +12,7 @@ export default {
     components: {
         FontAwesomeIcon
     },
-    props: ['renderer', 'active'],
+    props: ['renderer'],
     computed: {
         ...mapState({
             templates: (state) => state.model ? state.model.templates : null

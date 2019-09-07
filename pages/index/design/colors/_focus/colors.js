@@ -1,10 +1,9 @@
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { mapState } from "vuex";
 
 export default {
     name: 'select-color',
     components: {},
-    props: ['renderer', 'active'],
+    props: ['renderer'],
     data() {
         return {
             color_table: [
@@ -48,9 +47,11 @@ export default {
     },
     computed: {
         ...mapState({
-            focus: (state) => state.template_color_focus,
             colors: (state) => state.colors
         }),
+        focus() {
+            return this.$route.params.focus
+        },
         color_selection: {
             get() {
                 return this.colors ? this.colors[this.focus] : null
@@ -59,5 +60,9 @@ export default {
                 this.$store.dispatch('set_color', { renderer: this.renderer, index: this.focus, color: value })
             }
         },
+    },
+    validate ({ params }) {
+        // TODO check it's a valid index
+        return (/^\d+$/.test(params.focus))
     }
 }

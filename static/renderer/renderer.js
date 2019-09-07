@@ -30,13 +30,14 @@ export default class Renderer {
         renderer.setClearColor(0xFCFCFC)
         this.container.appendChild(renderer.domElement)
         renderer.setSize(this.width, this.height)
+        renderer.setClearColor(0xf0f0f0, 1)
 
         const camera = new THREE.PerspectiveCamera(this.view_angle,
             this.width/this.height, 0.1, 9999)
         camera.position.copy(new THREE.Vector3(0.5, 0.5, 3))
         const controls = new OrbitControls(camera, renderer.domElement)
-        controls.minDistance = 1.5
-        controls.maxDistance = 10
+        controls.minDistance = 1.8
+        controls.maxDistance = 2.5
         controls.maxPolarAngle = to_radians(90 + 20)
         controls.minPolarAngle = to_radians(90 - 20)
         controls.enableKeys = false
@@ -44,6 +45,7 @@ export default class Renderer {
         controls.addEventListener('change', function () {
             this.moved = true
         }.bind(this))
+        controls.update()
 
         this.texture_loader = new THREE.TextureLoader()
         this.camera = camera
@@ -62,9 +64,9 @@ export default class Renderer {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 1000 // window.innerWidth
-        this.height = 800 // window.innerHeight
-        this.view_angle = 75
+        this.width = 550 // window.innerWidth
+        this.height = 550 // window.innerHeight
+        this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
         bebas_font.load()
@@ -240,9 +242,7 @@ export default class Renderer {
         }).catch((err) => console.error(err.message))
     }
     async setTemplate(index) {
-        // TODO make sure it works
-        // TODO this is now async, maybe need to update store function
-        console.warn("setTemplate stub called")
+        // TODO use Vue.set() instead of recreating array
         this.template_index = index
         let template = this.model_info.templates[this.template_index]
         this.template_colors = [...template.colors_default]
@@ -252,7 +252,6 @@ export default class Renderer {
     async setTemplateColor(color_index, color) {
         // TODO color index or description?
         // TODO raise if no template is initialized
-        console.warn("setTemplateColor stub called")
         this.template_colors = [...this.template_colors]
         this.template_colors[color_index] = color
         await this._updateTemplate(color_index)

@@ -1,5 +1,5 @@
 <template>
-    <div class="config-panel" :class="[active ? '' : 'd-none']">
+    <div class="config-panel">
     <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" v-if="templates">
         <div class="inline-block" v-for="(templ_info, index) in templates" :key="index">
             <input class="hidden-radio template-radio" type="radio" :id="templ_info.name" :value="index" v-model="template_selection">

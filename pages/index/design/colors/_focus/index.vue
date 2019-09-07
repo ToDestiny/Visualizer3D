@@ -1,5 +1,5 @@
 <template>
-    <div class="config-panel" :class="[active ? '' : 'd-none']">
+    <div class="config-panel">
     <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap">
         <div class="inline-block" v-for="(color_option, index) in color_table" :key="index">
             <input class="hidden-radio color-radio" type="radio" :id="'color_' + index" :value="color_option" v-model="color_selection">
@@ -11,10 +11,14 @@
     </div>
 </template>
 
-<script src="./select_color.js"></script>
+<script src="./colors.js"></script>
 
 <style>
 .color-radio:checked + label {
     background: rgba(0, 0, 0, 0.2)
+}
+.color-box {
+    width: 55px;
+    height: 30px;
 }
 </style>

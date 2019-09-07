@@ -2,7 +2,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { mapState } from "vuex";
-import Renderer from "./renderer/renderer";
+import Renderer from "static/renderer/renderer.js";
 
 
 library.add(faPlusSquare)
@@ -13,7 +13,7 @@ export default {
     components: {
         FontAwesomeIcon
     },
-    props: ['renderer', 'active'],
+    props: ['renderer'],
     computed: {
         ...mapState({
             positions: (state) => (state.initialized) ? Renderer.getPositions(state.model) : null,

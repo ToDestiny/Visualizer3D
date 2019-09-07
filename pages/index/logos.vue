@@ -1,5 +1,5 @@
 <template>
-    <div class="config-panel" :class="[active ? '' : 'd-none']">
+    <div class="config-panel">
     <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
         <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
         <p v-if="logos_count == 0">Drag your logos here</p>
@@ -24,7 +24,7 @@
     </div>
 </template>
 
-<script src="./image_load.js"></script>
+<script src="./logos.js"></script>
 
 <style>
 .logo_container {

@@ -1,10 +1,7 @@
-import { mapState } from "vuex";
-import Renderer from "./renderer/renderer";
-
 export default {
     name: 'general_configs',
     components: {},
-    props: ['renderer', 'active'],
+    props: ['renderer'],
     computed: {
         text_name: {
             get() { return this.$store.state.text_name },
