@@ -13,8 +13,7 @@ export const state = () => ({
     template_selection: null,
     colors: [],
     logos: {},
-    text_name: "",
-    text_number: ""
+    text_slots: {}
 })
 
 export const mutations = {
@@ -23,13 +22,15 @@ export const mutations = {
     },
     load_model(state, model) {
         state.model = model
-        state.template_selection = 0
     },
     set_logo(state, logo) {
         Vue.set(state.logos, logo.uuid, logo)
     },
     remove_logo(state, logo) {
         Vue.delete(state.logos, logo.uuid)
+    },
+    clear_logos(state) {
+        state.logos = {}
     },
     set_template(state, { index, colors }) {
         state.template_selection = index
@@ -38,12 +39,9 @@ export const mutations = {
     set_colors(state, colors) {
         state.colors = colors
     },
-    set_text_name(state, text) {
-        state.text_name = text
+    set_text_slots(state, text_slots) {
+        state.text_slots = text_slots
     },
-    set_text_number(state, text) {
-        state.text_number = text
-    }
 }
 
 export const actions = {
@@ -53,9 +51,14 @@ export const actions = {
     },
     async load_model(context, { renderer, model_url }) {
         let model = await fetch(model_url).then(r => r.json())
-        let colors = await renderer.setModel(model)
-        context.commit('load_model', model)
-        context.commit('set_colors', colors)
+        let fresh_data = await renderer.setModel(model)
+        context.commit("load_model", model)
+        context.commit("set_template", {
+            index: fresh_data.template_index,
+            colors: fresh_data.colors
+        })
+        context.commit("clear_logos")
+        context.commit("set_text_slots", fresh_data.text_slots)
     },
     async set_logo(context, { renderer, logo, position }) {
         let new_logo = {...logo}
@@ -63,11 +66,11 @@ export const actions = {
             new_logo.uuid = uuidv4()
         new_logo.position = position 
         await renderer.setLogo(new_logo)
-        context.commit('set_logo', new_logo)
+        context.commit("set_logo", new_logo)
     },
     remove_logo(context, { renderer, logo }) {
         renderer.removeLogo(logo.uuid)
-        context.commit('remove_logo', logo)
+        context.commit("remove_logo", logo)
     },
     async set_template(context, { renderer, index }) {
         // TODO move inside renderer
@@ -76,7 +79,7 @@ export const actions = {
         else if (!context.state.model.templates[index])
             throw "Index specified doesn't correspond to a template"
         let colors = await renderer.setTemplate(index)
-        context.commit('set_template', { index, colors })
+        context.commit("set_template", { index, colors })
     },
     async set_color(context, { renderer, index, color }) {
         if (!context.state.colors)
@@ -84,14 +87,18 @@ export const actions = {
         else if (!context.state.colors[index])
             throw "Index specified doesn't correspond to a color slot"
         let colors = await renderer.setTemplateColor(index, color)
-        context.commit('set_colors', colors)
+        context.commit("set_colors", colors)
     },
-    set_text_name(context, { renderer, text }) {
-        renderer.setText(text, "name")
-        context.commit('set_text_name', text)
+    set_text(context, { renderer, text, slot }) {
+        renderer.setText(text, slot)
+        context.commit("set_text_slots", renderer.getTextSlots())
     },
-    set_text_number(context, { renderer, text }) {
-        renderer.setText(text, "number")
-        context.commit('set_text_number', text)
+    async load_config(context, { renderer, model }) {
+        let loaded = await renderer.loadConfig(model)
+        if (!loaded)
+            throw "Error while loading config"
+        context.commit("set_template", { index: loaded.template_index, colors: loaded.colors })
+        loaded.logos.forEach((logo) => context.commit("set_logo", logo))
+        context.commit("set_text_slots", loaded.text_slots)
     }
 }

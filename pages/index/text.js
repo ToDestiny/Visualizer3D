@@ -4,15 +4,15 @@ export default {
     props: ['renderer'],
     computed: {
         text_name: {
-            get() { return this.$store.state.text_name },
+            get() { return this.$store.state.text_slots["name"] },
             set(value) {
-                this.$store.dispatch("set_text_name", { renderer: this.renderer, text: value })
+                this.$store.dispatch("set_text", { renderer: this.renderer, text: value, slot: "name" })
             }
         },
         text_number: {
-            get() { return this.$store.state.text_number },
+            get() { return this.$store.state.text_slots["number"] },
             set(value) {
-                this.$store.dispatch("set_text_number", { renderer: this.renderer, text: value })
+                this.$store.dispatch("set_text", { renderer: this.renderer, text: value, slot: "number" })
             }
         }
     },

@@ -9,6 +9,7 @@
                 <!-- tabs -->
                 <nuxt-link class="tab-label" to="/design">Design</nuxt-link>
                 <transition-group name="expand" class="d-flex flex-column align-items-start">
+                    <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" to="/design/load" key="load">Load</nuxt-link>
                     <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" to="/design/template_select" key="template_select">Template</nuxt-link>
                     <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" :to="'/design/colors/' + index"
                         v-for="(color, index) in colors" :key="'color_' + index">Color {{index + 1}}</nuxt-link>
@@ -22,6 +23,7 @@
                     </template>
                 </transition-group>
                 <nuxt-link class="tab-label" to="/text">Text</nuxt-link>
+                <nuxt-link class="tab-label" to="/save">Save</nuxt-link>
             </div>
         </div>
         <div class="d-flex flex-row align-items-center justify-content-around center-container">

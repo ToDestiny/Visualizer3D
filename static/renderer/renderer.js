@@ -69,7 +69,7 @@ export default class Renderer {
         this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
-        bebas_font.load()
+        bebas_font.load() // TODO wait for it to finish??
         .then(() => {
             document.fonts.add(bebas_font)
         })
@@ -139,7 +139,7 @@ export default class Renderer {
         })
     }
     setupFixedLogos() {
-        this.model_info.fixed_logos.forEach((logo) => {
+        return Promise.all(this.model_info.fixed_logos.map((logo) => {
             let model = this.parts.find((part) => part.mesh.name == logo.part)
             return new Promise((resolve, reject) => {
                 UvCanvas.ImageRect.fromURL(logo.url, (image) => {
@@ -155,24 +155,23 @@ export default class Renderer {
                         reject("Error loading logo")
                 }, {}, () => reject("Error loading logo"))
             })
-        })
+        }))
     }
-    setModel(model_info) {
+    async setModel(model_info) {
         this.resetModel()
         this.model_info = model_info
         this.model_info.templates.forEach(this.setupTemplateSpec.bind(this))
-        this.parts = []
-        this.text_slots = {}
-        this.logos = {}
-        let load_parts_jobs = Promise.all(this.model_info.parts.map((part, index) => {
+        await Promise.all(this.model_info.parts.map((part, index) => {
             return new Promise((resolve, reject) => this.loadPart(part, index, resolve, reject))
         }))
-        return load_parts_jobs.then(() => {
-            Object.keys(this.model_info.text_slots).forEach((key) => {
-                this.setText("", key)
-            })
-        }).then(this.setupFixedLogos.bind(this))
-        .then(() => this.setTemplate(0))
+        await this.setupFixedLogos()
+        Object.keys(this.model_info.text_slots).forEach((key) => this.setText("", key))
+        let colors = await this.setTemplate(0)
+        return {
+            text_slots: this.getTextSlots(),
+            template_index: 0,
+            colors
+        }
     }
     resetModel() {
         if (this.parts) {
@@ -180,8 +179,10 @@ export default class Renderer {
                 this.scene.remove(part.obj)
                 // TODO does the canvas stuff need to be freed?
             })
-            this.parts = []
         }
+        this.parts = []
+        this.text_slots = {}
+        this.logos = {}
     }
     _clearTemplateCanvas(part_index, color_index, update=true) {
         if (color_index == undefined)
@@ -247,7 +248,7 @@ export default class Renderer {
         let template = this.model_info.templates[this.template_index]
         this.template_colors = [...template.colors_default]
         await this._updateTemplate()
-        return this.template_colors
+        return this.getTemplateColors()
     }
     async setTemplateColor(color_index, color) {
         // TODO color index or description?
@@ -255,6 +256,9 @@ export default class Renderer {
         this.template_colors = [...this.template_colors]
         this.template_colors[color_index] = color
         await this._updateTemplate(color_index)
+        return this.getTemplateColors()
+    }
+    getTemplateColors() {
         return this.template_colors
     }
     setLogo({ data, uuid, position }, resolve) {
@@ -273,7 +277,8 @@ export default class Renderer {
                         image: image,
                         canvas: specs.model.canvas,
                         model: specs.model,
-                        position: position
+                        position: position,
+                        data: data
                     }
                     specs.model.canvas.add(image, 1)
                     specs.model.canvas.renderAll()
@@ -307,6 +312,7 @@ export default class Renderer {
                 center_x: specs.center_x
             })
             this.text_slots[slot] = {
+                text,
                 text_rect: text_rect,
                 model: specs.model,
                 canvas: specs.model.canvas
@@ -314,6 +320,13 @@ export default class Renderer {
             specs.model.canvas.add(text_rect, 1)
             specs.model.canvas.renderAll()
         }
+        return text
+    }
+    getTextSlots() {
+        return Object.keys(this.text_slots).reduce((map, curr) => {
+            map[curr] = this.text_slots[curr].text
+            return map
+        }, {})
     }
     textSlotToSpecs(slot) {
         let config = this.model_info.text_slots[slot]
@@ -339,11 +352,12 @@ export default class Renderer {
     getConfig() {
         return {
             model_name: this.model_info.name,
+            url: this.model_info.url,
             version: this.model_info.version,
-            logos: Object.keys(this.logos).map((key) => ({
-                data: this.logos[key].image.getBase64(),
-                position: this.logos[key].position,
-                uuid: key
+            logos: Object.keys(this.logos).map((uuid) => ({
+                uuid,
+                data: this.logos[uuid].image.getBase64(),
+                position: this.logos[uuid].position,
             })),
             text: Object.keys(this.text_slots).map((key) => ({
                 text: this.text_slots[key].text_rect.text,
@@ -353,14 +367,28 @@ export default class Renderer {
             template_colors: this.template_colors
         }
     }
-    loadConfig(config) {
-        // TODO use inside of store action
-        if (config.model_name != this.model_info.name || config.version || this.model_info.version)
-            throw "Loading a config with a different model is not supperted. TODO (?)"
-        config.logos.forEach((logo) => this.setLogo(logo))
+    async loadConfig(config) {
+        if (config.version != this.model_info.version)
+            throw "Loading a config with a different version is not supported. TODO (?)"
+        if (config.model_name != this.model_name)
+        {
+            let model_info = await fetch(config.url).then(r => r.json())
+            await this.setModel(model_info)
+        }
+        await Promise.all(config.logos.map((logo) => this.setLogo(logo)))
         config.text.forEach((text) => this.setText(text.text, text.slot))
-        this.setTemplate(config.template_index)
-        config.template_colors.forEach((color, index) => this.setTemplateColor(index, color))
+        await this.setTemplate(config.template_index)
+        await Promise.all(config.template_colors.map((color, index) => this.setTemplateColor(index, color)))
+        return {
+            template_index: this.template_index,
+            colors: this.getTemplateColors(),
+            text_slots: this.getTextSlots(),
+            logos: Object.keys(this.logos).map((uuid) => ({
+                uuid,
+                position: this.logos[uuid].position,
+                data: this.logos[uuid].data
+            }))
+        }
     }
     renderLoop() {
         window.requestAnimationFrame(this.renderLoop.bind(this))

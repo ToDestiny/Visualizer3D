@@ -1,5 +1,6 @@
 {
     "name": "t-shirt",
+    "url": "/t-shirt/t-shirt.json",
     "version": "0.01",
     "parts": [
         {

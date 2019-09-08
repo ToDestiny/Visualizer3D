@@ -12,9 +12,6 @@
                     <font-awesome-icon icon="window-close"/>
                 </button>
             </div>
-            <div>
-                {{ img_info.file.name.substring(0, 13) }}
-            </div>
             <select :value="img_info.position" @change="moveLogo(img_info, $event.target.value)">
                 <option v-for="(pos, index) in positions" :key="index" :value="pos.index">
                     {{ pos.name }}

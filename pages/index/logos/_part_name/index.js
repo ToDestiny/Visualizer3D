@@ -18,8 +18,6 @@ export default {
     computed: {
         logos() {
             let filter_positions = this.positions
-            console.log(this.positions)
-            console.log(Object.values(this.$store.state.logos))
             return Object.values(this.$store.state.logos)
                 .filter(({ position }) => filter_positions.some(({ index }) => index == position))
         },
@@ -57,9 +55,7 @@ export default {
                 let reader = new FileReader();
                 reader.onload = (e) => {
                     let new_image = {
-                      file: fl,
                       data: e.target.result,
-                      position: 0
                     }
                     this.$store.dispatch('set_logo', { renderer: this.renderer, logo: new_image, position: this.positions[0].index })
                 };
