@@ -13,9 +13,17 @@ export default {
             return this.$route.matched.some(({ regex }) => regex.test(path))
         }
     },
-    computed: mapState({
-        colors: (state) => state.colors
-    }),
+    computed: {
+        ...mapState({
+            colors: (state) => state.colors,
+            model: (state) => state.model,
+        }),
+        logo_parts() {
+            return this.model.parts.filter(({ name }) => 
+                this.model.logos.some(({part}) => name === part)
+            )
+        }
+    },
     mounted () {
         if (!this.$store.state.initialized) {
             this.renderer = new Renderer(this.$refs.rendererContainer)

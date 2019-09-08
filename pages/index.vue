@@ -9,16 +9,25 @@
                 <!-- tabs -->
                 <nuxt-link class="tab-label" to="/design">Design</nuxt-link>
                 <transition-group name="expand" class="d-flex flex-column align-items-start">
-                    <nuxt-link v-show="route_matches('/design')" class="tab-label-sub" to="/design/template_select" key="template_select">Template</nuxt-link>
+                    <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" to="/design/template_select" key="template_select">Template</nuxt-link>
                     <nuxt-link v-show="route_matches('/design')" class="tab-label-sub text-nowrap" :to="'/design/colors/' + index"
                         v-for="(color, index) in colors" :key="'color_' + index">Color {{index + 1}}</nuxt-link>
                 </transition-group>
                 <nuxt-link class="tab-label" to="/logos">Logos</nuxt-link>
+                <transition-group name="expand" class="d-flex flex-column align-items-start">
+                    <template v-if="model && model.parts">
+                    <nuxt-link v-show="route_matches('/logos')" class="tab-label-sub text-nowrap" :to="'/logos/' + part.name"
+                        v-for="(part, index) in logo_parts" :key="'part_' + index">{{part.nice_name}}
+                    </nuxt-link>
+                    </template>
+                </transition-group>
                 <nuxt-link class="tab-label" to="/text">Text</nuxt-link>
             </div>
         </div>
-        <div class="d-flex flex-row align-items-center center-container">
-            <nuxt-child class="config-container" :renderer="renderer"/>
+        <div class="d-flex flex-row align-items-center justify-content-around center-container">
+            <div class="config-container">
+                <nuxt-child :renderer="renderer"/>
+            </div>
             <div class="renderer-container" ref="rendererContainer"/>
         </div>
     </section>
@@ -36,7 +45,19 @@
     max-width: 200px;
 }
 .container {
-    max-width: 100%
+    position: fixed;
+    left: 0;
+    top: 0;
+    max-width: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        white,
+        white 10px,
+        lightgrey 1.5px,
+        lightgrey 11.5px
+    );
+    width: 100%;
+    height: 100%;
 }
 .hidden-radio {
     display: none;
@@ -93,6 +114,7 @@ a, a:hover {
     height: 100%;
     padding-top: 50px;
     padding-left: 30px;
+    background-color: white;
     border-style: solid;
     border-image:
         linear-gradient(
@@ -104,19 +126,25 @@ a, a:hover {
 .center-container {
     position: fixed;
     left: 20vw;
-    top: 20vh;
+    top: 0;
     width: 80vw;
+    height: 100%;
+}
+.config-container, .renderer-container {
+    background: white;
+    border-radius: 10px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: lightgrey;
+    box-sizing: content-box;
 }
 .config-container {
-    flex-grow: 2;
-    width: 550px;
+    min-width: 550px;
     min-height: 400px;
     max-height: 700px;
-    background-color: lightgrey;
 }
 .renderer-container {
-    flex-grow: 1;
-    width: 550px;
-    height: 550px;
+    min-width: 550px;
+    min-height: 550px;
 }
 </style>

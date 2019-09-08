@@ -4,30 +4,35 @@
     "parts": [
         {
             "name": "front",
+            "nice_name": "Front",
             "obj_file": "/t-shirt/front.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "back",
+            "nice_name": "Back",
             "obj_file": "/t-shirt/back.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_left",
+            "nice_name": "Left sleeve",
             "obj_file": "/t-shirt/sleeve_left.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_right",
+            "nice_name": "Right sleeve",
             "obj_file": "/t-shirt/sleeve_right.obj",
             "color_map": null,
              "normal_map": null
         },
         {
             "name": "collar",
+            "nice_name": "Collar",
             "obj_file": "/t-shirt/collar.obj",
             "color_map": null,
              "normal_map": null

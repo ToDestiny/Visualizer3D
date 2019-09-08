@@ -1,8 +1,9 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons"
+import { faPlusSquare, faWindowClose, faTintSlash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { mapState } from "vuex";
 import Renderer from "static/renderer/renderer.js";
+import { CompressedPixelFormat } from "three";
 
 
 library.add(faPlusSquare)
@@ -15,11 +16,26 @@ export default {
     },
     props: ['renderer'],
     computed: {
-        ...mapState({
-            positions: (state) => (state.initialized) ? Renderer.getPositions(state.model) : null,
-            logos_count: (state) => Object.keys(state.logos).length,
-            logos: 'logos'
-        })
+        logos() {
+            let filter_positions = this.positions
+            console.log(this.positions)
+            console.log(Object.values(this.$store.state.logos))
+            return Object.values(this.$store.state.logos)
+                .filter(({ position }) => filter_positions.some(({ index }) => index == position))
+        },
+        positions() {
+            if (!this.$store.state.initialized)
+                return null
+            return Renderer.getPositions(this.$store.state.model)
+                .map((position, index) => ({...position, index}))
+                .filter(({ part }) => part == this.part_name)
+        },
+        logos_count() {
+            return this.logos ? Object.keys(this.logos).length : 0
+        },
+        part_name() {
+            return this.$route.params.part_name
+        }
     },
     methods: {
         onDrop (ev) {
@@ -45,7 +61,7 @@ export default {
                       data: e.target.result,
                       position: 0
                     }
-                    this.$store.dispatch('set_logo', { renderer: this.renderer, logo: new_image, position: 0 })
+                    this.$store.dispatch('set_logo', { renderer: this.renderer, logo: new_image, position: this.positions[0].index })
                 };
                 reader.readAsDataURL(fl);
             }
@@ -57,4 +73,5 @@ export default {
             this.$store.dispatch('remove_logo', { renderer: this.renderer, logo: image })
         }
     }
+    // TODO validate part name
 }

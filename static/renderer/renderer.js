@@ -30,7 +30,7 @@ export default class Renderer {
         renderer.setClearColor(0xFCFCFC)
         this.container.appendChild(renderer.domElement)
         renderer.setSize(this.width, this.height)
-        renderer.setClearColor(0xf0f0f0, 1)
+        renderer.setClearColor(0xffffff, 1)
 
         const camera = new THREE.PerspectiveCamera(this.view_angle,
             this.width/this.height, 0.1, 9999)
