@@ -1,8 +1,10 @@
 <template>
-    <div class="config-panel">
-    <div class="mt-3 mb-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
+    <div class="px-3 py-3 d-flex flex-column justify-content-center align-items-center" id="dz" @drop="onDrop" @dragover="onDragHandler" v-if="logos_count == 0">
         <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
-        <p v-if="logos_count == 0">Drag your logos here</p>
+        <p>Drag your logos here</p>
+        <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" /> 
+    </div>
+    <div class="px-3 py-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler" v-else>
         <div class="inline-block" v-for="(img_info, k) in logos" :key="k">
             <div class="logo_container">
                 <img class="logo_thumb" :src="img_info.data" alt="Logo Preview" :ref="'img_' + k"/>
@@ -20,7 +22,6 @@
             </select>
         </div>
         <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
-    </div>
     </div>
 </template>
 

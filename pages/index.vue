@@ -17,8 +17,10 @@
                 <nuxt-link class="tab-label" to="/text">Text</nuxt-link>
             </div>
         </div>
-        <nuxt-child class="config-container" :renderer="renderer"/>
-        <div class="renderer-container" ref="rendererContainer"/>
+        <div class="d-flex flex-row align-items-center center-container">
+            <nuxt-child class="config-container" :renderer="renderer"/>
+            <div class="renderer-container" ref="rendererContainer"/>
+        </div>
     </section>
 </template>
 
@@ -99,18 +101,21 @@ a, a:hover {
             rgba(0, 0, 0, 0)
         ) 1 100% / 0 10px 0 0;
 }
-.config-container {
+.center-container {
     position: fixed;
     left: 20vw;
     top: 20vh;
+    width: 80vw;
+}
+.config-container {
+    flex-grow: 2;
     width: 550px;
-    height: 550px;
+    min-height: 400px;
+    max-height: 700px;
     background-color: lightgrey;
 }
 .renderer-container {
-    position: fixed;
-    left: 50vw;
-    top: 20vh;
+    flex-grow: 1;
     width: 550px;
     height: 550px;
 }
