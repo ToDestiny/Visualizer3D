@@ -159,13 +159,13 @@
     },
     "templates": [
         {
-            "name": "example1",
+            "name": "Future",
             "thumb_url": "/t-shirt/templates/template1/thumb.png",
             "color_masks": "/t-shirt/templates/template1/mask{0}_{1}.png",
             "colors_default": ["#000000", "#ffffff", "#000000"]
         },
         {
-            "name": "example2",
+            "name": "Triangle",
             "thumb_url": "/t-shirt/templates/template2/thumb.png",
             "color_masks": "/t-shirt/templates/template2/mask{0}_{1}.png",
             "colors_default": ["#ffffff", "#000000"]

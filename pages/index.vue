@@ -42,6 +42,10 @@
   font-family: Bebas Neue;
   src: url("/fonts/BebasNeue-Regular.woff2");
 }
+@font-face {
+  font-family: Dosis;
+  src: url("/fonts/dosis-v12-latin-regular.woff2");
+}
 .myth-logo {
     margin: 0 0 20px 20px;
     max-width: 200px;
@@ -142,8 +146,10 @@ a, a:hover {
 }
 .config-container {
     min-width: 550px;
+    max-width: 600px;
     min-height: 400px;
     max-height: 700px;
+    overflow: scroll;
 }
 .renderer-container {
     min-width: 550px;
