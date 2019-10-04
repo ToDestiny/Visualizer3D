@@ -89,8 +89,8 @@ export const actions = {
         let colors = await renderer.setTemplateColor(index, color)
         context.commit("set_colors", colors)
     },
-    set_text(context, { renderer, text, slot }) {
-        renderer.setText(text, slot)
+    set_text(context, { renderer, text, color, slot }) {
+        renderer.setText({ text, color }, slot)
         context.commit("set_text_slots", renderer.getTextSlots())
     },
     async load_config(context, { renderer, model }) {

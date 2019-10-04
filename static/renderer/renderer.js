@@ -165,7 +165,10 @@ export default class Renderer {
             return new Promise((resolve, reject) => this.loadPart(part, index, resolve, reject))
         }))
         await this.setupFixedLogos()
-        Object.keys(this.model_info.text_slots).forEach((key) => this.setText("", key))
+        Object.keys(this.model_info.text_slots).forEach((key) => this.setText({
+            text: "",
+            color: null
+        }, key))
         let colors = await this.setTemplate(0)
         return {
             text_slots: this.getTextSlots(),
@@ -296,7 +299,9 @@ export default class Renderer {
             delete this.logos[uuid]
         }
     }
-    setText(text, slot) {
+    setText({ text, color }, slot) {
+        if (!color)
+            color = "white"
         if (this.text_slots[slot]) {
             this.text_slots[slot].canvas.remove(this.text_slots[slot].text_rect)
             this.text_slots[slot].canvas.renderAll()
@@ -307,12 +312,13 @@ export default class Renderer {
             let text_rect = new TextRect(text, {
                 font_size: specs.font_size,
                 font_family: "Bebas Neue",
-                fill: "white",
+                fill: color,
                 center_y: specs.center_y,
                 center_x: specs.center_x
             })
             this.text_slots[slot] = {
                 text,
+                color,
                 text_rect: text_rect,
                 model: specs.model,
                 canvas: specs.model.canvas
@@ -324,7 +330,10 @@ export default class Renderer {
     }
     getTextSlots() {
         return Object.keys(this.text_slots).reduce((map, curr) => {
-            map[curr] = this.text_slots[curr].text
+            map[curr] = {
+                text: this.text_slots[curr].text,
+                color: this.text_slots[curr].color
+            }
             return map
         }, {})
     }
@@ -360,7 +369,8 @@ export default class Renderer {
                 position: this.logos[uuid].position,
             })),
             text: Object.keys(this.text_slots).map((key) => ({
-                text: this.text_slots[key].text_rect.text,
+                text: this.text_slots[key].text,
+                color: this.text_slots[key].color,
                 slot: key
             })),
             template_index: this.template_index,
@@ -376,7 +386,10 @@ export default class Renderer {
             await this.setModel(model_info)
         }
         await Promise.all(config.logos.map((logo) => this.setLogo(logo)))
-        config.text.forEach((text) => this.setText(text.text, text.slot))
+        config.text.forEach((text) => this.setText({
+            text: text.text,
+            color: text.color
+        }, text.slot))
         await this.setTemplate(config.template_index)
         await Promise.all(config.template_colors.map((color, index) => this.setTemplateColor(index, color)))
         return {
