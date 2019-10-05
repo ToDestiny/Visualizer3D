@@ -10,7 +10,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUpload } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-
+import * as JSZip from "jszip"
 
 library.add(faUpload)
 
@@ -23,12 +23,15 @@ export default {
     methods: {
         load_config(files) {
             let file = files[0]
-            console.log(file)
             let reader = new FileReader()
             reader.onload = (e) => {
-                console.log(e.target.result)
-                let model = JSON.parse(e.target.result)
-                this.$store.dispatch("load_config", { renderer: this.renderer, model })
+                let zip = new JSZip()
+                zip.loadAsync(e.target.result)
+                    .then((zip) => zip.file("model_config.json").async("string"))
+                    .then((config) => {
+                        let model = JSON.parse(config)
+                        this.$store.dispatch("load_config", { renderer: this.renderer, model })
+                    })
             }
             reader.readAsBinaryString(file)
         },
