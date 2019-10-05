@@ -4,6 +4,7 @@ import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
 import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
 import { TextRect } from './canvas_shapes/text.js';
+import Observable from './observable.js'
 
 function format(str, obj) {
     return str.replace(/\{\s*([^}\s]+)\s*\}/g, function(m, p1, offset, string) {
@@ -11,7 +12,7 @@ function format(str, obj) {
     })
 }
 
-export default class Renderer {
+export default class Renderer extends Observable {
     static getPositions(model_info) {
         // TODO add custom config
         return model_info.logos
@@ -26,7 +27,10 @@ export default class Renderer {
         point_light1.position.copy(new THREE.Vector3(0, 10, -5))
         const raycaster = new THREE.Raycaster();
 
-        const renderer = new THREE.WebGLRenderer({antialias: true})
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            preserveDrawingBuffer: true
+        })
         renderer.setClearColor(0xFCFCFC)
         this.container.appendChild(renderer.domElement)
         renderer.setSize(this.width, this.height)
@@ -49,6 +53,7 @@ export default class Renderer {
 
         this.texture_loader = new THREE.TextureLoader()
         this.camera = camera
+        this.controls = controls
         this.renderer = renderer
         this.scene = scene
         this.light = light
@@ -61,6 +66,7 @@ export default class Renderer {
         this.renderLoop()
     }
     constructor(container) {
+        super()
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
@@ -401,9 +407,14 @@ export default class Renderer {
             }))
         }
     }
+    resetCamera() {
+        this.controls.reset()
+    }
     renderLoop() {
+        this.fire("before:render")
         window.requestAnimationFrame(this.renderLoop.bind(this))
         this.renderer.render(this.scene, this.camera)
+        this.fire("after:render")
     }
     // TODO rewrite everything under this
     // ---------------------------------------------------------------------------------- //

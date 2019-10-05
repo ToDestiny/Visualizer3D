@@ -21,8 +21,8 @@ export class ImageRect {
         }
         this.width = this.width || this.img_el.width
         this.height = this.height || this.img_el.height
-        this.subcanvas_element.width = this.width
-        this.subcanvas_element.height = this.height
+        this.subcanvas_element.width = this.img_el.width
+        this.subcanvas_element.height = this.img_el.height
         this.angle = this.angle || 0
         this.center_y = this.center_y || 0
         this.center_x = this.center_x || 0
@@ -40,11 +40,11 @@ export class ImageRect {
     _composite() {
         let subcanvas_ctx = this.subcanvas_element.getContext("2d")
         subcanvas_ctx.globalCompositeOperation = "source-over"
-        subcanvas_ctx.drawImage(this.img_el, 0, 0, this.width, this.height)
+        subcanvas_ctx.drawImage(this.img_el, 0, 0, this.img_el.width, this.img_el.height)
         if (this.fill) {
             subcanvas_ctx.fillStyle = this.fill
             subcanvas_ctx.globalCompositeOperation = this.color_compositing
-            subcanvas_ctx.fillRect(0, 0, this.width, this.height)
+            subcanvas_ctx.fillRect(0, 0, this.img_el.width, this.img_el.height)
         }
     }
     _render(ctx) {
@@ -85,10 +85,7 @@ export class ImageRect {
     scale(factor) {
         this.width *= factor
         this.height *= factor
-        this.subcanvas_element.width = this.width
-        this.subcanvas_element.height = this.height
     }
-
     scaleToWidth(new_width) {
         if (this.width === 0 && new_width != 0)
             throw "Width is 0, no constant is going scale it up to argument"
@@ -101,9 +98,9 @@ export class ImageRect {
     }
     getBase64() {
         let simple = this._getSimpleContext()
-        simple.canvas.width = this.width
-        simple.canvas.height = this.height
-        simple.ctx.drawImage(this.img_el, 0, 0, this.width, this.height)
+        simple.canvas.width = this.img_el.width
+        simple.canvas.height = this.img_el.height
+        simple.ctx.drawImage(this.img_el, 0, 0, this.img_el.width, this.img_el.height)
         return simple.canvas.toDataURL()
     }
 }

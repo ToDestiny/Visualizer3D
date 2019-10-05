@@ -1,27 +1,51 @@
 <template>
-    <b-input-group>
-        <b-form-input type="text" placeholder="Json model config" v-model="curr_string"></b-form-input>
-        <b-input-group-append>
-            <b-button variant="outline-secondary" @click="load_config()">Button</b-button>
-        </b-input-group-append>
-  </b-input-group>
+    <div class="px-3 py-3 d-flex flex-column justify-content-center align-items-center" id="dz" @drop="onDrop" @dragover="onDragHandler">
+        <font-awesome-icon style="font-size: 4em;" icon="upload" @click="clickOnTmpFile"/>
+        <p>Upload your model configuration</p>
+        <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />
+    </div>
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faUpload } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+
+library.add(faUpload)
+
 export default {
     name: 'save',
-    components: {},
-    props: ['renderer'],
-    data() {
-        return {
-            curr_string: ""
-        }
+    components: {
+        FontAwesomeIcon
     },
+    props: ['renderer'],
     methods: {
-        load_config() {
-            let model = JSON.parse(this.curr_string)
-            this.$store.dispatch("load_config", { renderer: this.renderer, model })
-        }
+        load_config(files) {
+            let file = files[0]
+            console.log(file)
+            let reader = new FileReader()
+            reader.onload = (e) => {
+                console.log(e.target.result)
+                let model = JSON.parse(e.target.result)
+                this.$store.dispatch("load_config", { renderer: this.renderer, model })
+            }
+            reader.readAsBinaryString(file)
+        },
+        onDrop (ev) {
+            ev.preventDefault()
+            this.load_config(ev.dataTransfer.files)
+        },
+        onDragHandler(ev) {
+            ev.preventDefault()
+        },
+        clickOnTmpFile() {
+            this.$refs.tmpFile.click()
+        },
+        newTmpFile(ev) {
+            this.load_config(this.$refs.tmpFile.files)
+            this.$refs.tmpFile.value = ""
+        },
     }
 }
 </script>

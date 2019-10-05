@@ -1,4 +1,4 @@
-import Observable from './uv_canvas_obs.js'
+import Observable from './observable.js'
 
 class Canvas extends Observable {
     constructor(name, options) {

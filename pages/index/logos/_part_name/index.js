@@ -1,9 +1,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlusSquare, faWindowClose, faTintSlash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { mapState } from "vuex";
 import Renderer from "static/renderer/renderer.js";
-import { CompressedPixelFormat } from "three";
 
 
 library.add(faPlusSquare)
