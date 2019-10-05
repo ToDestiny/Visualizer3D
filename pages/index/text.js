@@ -4,6 +4,18 @@ export default {
     name: 'general_configs',
     components: {},
     props: ['renderer'],
+    data() {
+        return {
+            color_table: [
+                [
+                    '#ffffff',
+                    '#000000',
+                    '#ff0000',
+                    '#0000ff',
+                ],
+            ]
+        }
+    },
     computed: {
         ...mapState({
             name: (state) => state.text_slots["name"] ?

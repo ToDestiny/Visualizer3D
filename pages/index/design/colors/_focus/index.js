@@ -66,8 +66,7 @@ export default {
                     '#120e5d',
                     '#3c0c41',
                 ],
-            ],
-            custom_color: "#ff0000"
+            ]
         }
     },
     computed: {

@@ -11,41 +11,10 @@
             </div>
         </div>
     </div>
-    <div class="d-block">
-        <input type="text" class="color-picker my-3 align-self-start" v-model="custom_color"/>
-        <div class="my-2 mx-1">
-            <input class="hidden-radio color-radio" type="radio" id="custom_color_btn" :value="custom_color" v-model="color_selection">
-            <label class="color-label" for="custom_color_btn">
-                <div class="color-box" :style="{ 'background-color': custom_color }"/>
-            </label>
-        </div>
-    </div>
     </div>
 </template>
 
 <script src="./index.js"></script>
 
 <style>
-.color-radio:checked + .color-label {
-    background: rgba(0, 0, 0, 0.2)
-}
-.color-label {
-    border-radius: 10px;
-    padding: 5px 2px;
-    display: inline-block;
-    line-height: 0;
-    margin: 0;
-}
-.color-box {
-    width: 60px;
-    height: 30px;
-    display: inline-block;
-    line-height: 0;
-    border-style: solid;
-    border-color: darkgrey;
-    border-width: 2px;
-}
-.color-picker {
-    width: 8em;
-}
 </style>

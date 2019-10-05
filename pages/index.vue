@@ -155,4 +155,26 @@ a, a:hover {
     min-width: 550px;
     min-height: 550px;
 }
+.color-radio:checked + .color-label {
+    background: rgba(0, 0, 0, 0.2)
+}
+.color-label {
+    border-radius: 10px;
+    padding: 5px 2px;
+    display: inline-block;
+    line-height: 0;
+    margin: 0;
+}
+.color-box {
+    width: 60px;
+    height: 30px;
+    display: inline-block;
+    line-height: 0;
+    border-style: solid;
+    border-color: darkgrey;
+    border-width: 2px;
+}
+.color-picker {
+    width: 8em;
+}
 </style>

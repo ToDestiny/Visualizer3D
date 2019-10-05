@@ -301,32 +301,30 @@ export default class Renderer {
     }
     setText({ text, color }, slot) {
         if (!color)
-            color = "white"
+            color = "#ffffff"
         if (this.text_slots[slot]) {
             this.text_slots[slot].canvas.remove(this.text_slots[slot].text_rect)
             this.text_slots[slot].canvas.renderAll()
             delete this.text_slots[slot]
         }
-        if (text) {
-            let specs = this.textSlotToSpecs(slot)
-            let text_rect = new TextRect(text, {
-                font_size: specs.font_size,
-                font_family: "Bebas Neue",
-                fill: color,
-                center_y: specs.center_y,
-                center_x: specs.center_x
-            })
-            this.text_slots[slot] = {
-                text,
-                color,
-                text_rect: text_rect,
-                model: specs.model,
-                canvas: specs.model.canvas
-            }
-            specs.model.canvas.add(text_rect, 1)
-            specs.model.canvas.renderAll()
+        let specs = this.textSlotToSpecs(slot)
+        let text_rect = new TextRect(text, {
+            font_size: specs.font_size,
+            font_family: "Bebas Neue",
+            fill: color,
+            center_y: specs.center_y,
+            center_x: specs.center_x
+        })
+        this.text_slots[slot] = {
+            text,
+            color,
+            text_rect: text_rect,
+            model: specs.model,
+            canvas: specs.model.canvas
         }
-        return text
+        specs.model.canvas.add(text_rect, 1)
+        specs.model.canvas.renderAll()
+        return this.text_slots[slot]
     }
     getTextSlots() {
         return Object.keys(this.text_slots).reduce((map, curr) => {
