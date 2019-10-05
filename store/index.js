@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Renderer from '../static/renderer/renderer';
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -50,7 +51,8 @@ export const actions = {
         context.commit('initialize')
     },
     async load_model(context, { renderer, model_url }) {
-        let model = await fetch(model_url).then(r => r.json())
+        let model = await Renderer.fetchConfig(model_url)
+        // load model
         let fresh_data = await renderer.setModel(model)
         context.commit("load_model", model)
         context.commit("set_template", {

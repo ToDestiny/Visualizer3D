@@ -17,6 +17,19 @@ export default class Renderer extends Observable {
         // TODO add custom config
         return model_info.logos
     }
+    static async fetchConfig(model_url) {
+        let model = await fetch(model_url).then(r => r.json())
+        let model_path = model_url.substring(0, model_url.lastIndexOf("/") + 1)
+        model["url"] = model_url
+        model.parts.forEach((part) => {
+            part.obj_file = model_path + part.obj_file
+        })
+        model.templates.forEach((templ) => {
+            templ.thumb_url = model_path + templ.thumb_url
+            templ.color_masks = model_path + templ.color_masks
+        })
+        return model
+    }
     initThree(model) {
         const scene = new THREE.Scene()
 
@@ -386,7 +399,7 @@ export default class Renderer extends Observable {
             throw "Loading a config with a different version is not supported. TODO (?)"
         if (config.model_name != this.model_name)
         {
-            let model_info = await fetch(config.url).then(r => r.json())
+            let model_info = await Renderer.fetchConfig(config.url)
             await this.setModel(model_info)
         }
         await Promise.all(config.logos.map((logo) => this.setLogo(logo)))

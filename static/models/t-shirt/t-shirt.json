@@ -1,40 +1,39 @@
 {
     "name": "t-shirt",
-    "url": "/t-shirt/t-shirt.json",
-    "version": "0.01",
+    "version": "0.02",
     "parts": [
         {
             "name": "front",
             "nice_name": "Front",
-            "obj_file": "/t-shirt/front.obj",
+            "obj_file": "front.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "back",
             "nice_name": "Back",
-            "obj_file": "/t-shirt/back.obj",
+            "obj_file": "back.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_left",
             "nice_name": "Left sleeve",
-            "obj_file": "/t-shirt/sleeve_left.obj",
+            "obj_file": "sleeve_left.obj",
             "color_map": null,
             "normal_map": null
         },
         {
             "name": "sleeve_right",
             "nice_name": "Right sleeve",
-            "obj_file": "/t-shirt/sleeve_right.obj",
+            "obj_file": "sleeve_right.obj",
             "color_map": null,
              "normal_map": null
         },
         {
             "name": "collar",
             "nice_name": "Collar",
-            "obj_file": "/t-shirt/collar.obj",
+            "obj_file": "collar.obj",
             "color_map": null,
              "normal_map": null
         }
@@ -160,14 +159,14 @@
     "templates": [
         {
             "name": "Future",
-            "thumb_url": "/t-shirt/templates/template1/thumb.png",
-            "color_masks": "/t-shirt/templates/template1/mask{0}_{1}.png",
+            "thumb_url": "templates/template1/thumb.png",
+            "color_masks": "templates/template1/mask{0}_{1}.png",
             "colors_default": ["#000000", "#ffffff", "#000000"]
         },
         {
             "name": "Triangle",
-            "thumb_url": "/t-shirt/templates/template2/thumb.png",
-            "color_masks": "/t-shirt/templates/template2/mask{0}_{1}.png",
+            "thumb_url": "templates/template2/thumb.png",
+            "color_masks": "templates/template2/mask{0}_{1}.png",
             "colors_default": ["#ffffff", "#000000"]
         }
     ]

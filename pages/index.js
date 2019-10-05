@@ -27,9 +27,9 @@ export default {
     mounted () {
         if (!this.$store.state.initialized) {
             this.renderer = new Renderer(this.$refs.rendererContainer)
-            this.$store.dispatch('initialize', { renderer: this.renderer, model_url: '/t-shirt/t-shirt.json' })
+            this.$store.dispatch('initialize', { renderer: this.renderer, model_url: '/models/t-shirt/t-shirt.json' })
         }
         else
             console.log('keeping renderer')
-  },
+    },
 }
