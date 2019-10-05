@@ -1,10 +1,10 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-column justify-content-center align-items-center" id="dz" @drop="onDrop" @dragover="onDragHandler" v-if="logos_count == 0">
-        <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
-        <p>Drag your logos here</p>
-        <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" /> 
-    </div>
-    <div class="px-3 py-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler" v-else>
+    <div class="px-3 py-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
+        <div class="d-flex flex-column align-items-center">
+            <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
+            <p>Drag your logos here</p>
+            <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" /> 
+        </div>
         <div class="inline-block" v-for="(img_info, k) in logos" :key="k">
             <div class="logo_container">
                 <img class="logo_thumb" :src="img_info.data" alt="Logo Preview" :ref="'img_' + k"/>

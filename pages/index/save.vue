@@ -1,9 +1,23 @@
 <template>
-    <button @click="onSaveFile">Save to file</button>
+    <div class="px-3 py-3 d-flex flex-row justify-content-around align-items-center" style="height: 400px">
+        <div @click="onSaveFile" class="d-flex flex-column align-items-center">
+            <font-awesome-icon style="font-size: 4em;" icon="save"/>
+            <p>Download</p>
+        </div>
+        <div @click="onSaveFile" class="d-flex flex-column align-items-center">
+            <font-awesome-icon style="font-size: 4em;" icon="save"/>
+            <p>Save to dashboard</p>
+        </div>
+    </div>
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faSave } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import * as JSZip from "jszip"
+
+library.add(faSave)
 
 function downloadBlob(blob, filename) {
     let el = document.createElement("a")
@@ -29,7 +43,9 @@ function get_screenshot(renderer, resolve, reject) {
 
 export default {
     name: 'save',
-    components: {},
+    components: {
+        FontAwesomeIcon
+    },
     props: ['renderer'],
     methods: {
         onSaveFile() {
