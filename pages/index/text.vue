@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-column justify-content-start">
+    <div class="px-2 py-2 d-flex flex-column justify-content-start">
         <div class="my-3 d-inline">
             Player's Name: 
             <input type="text" class="name-input" placeholder="Player's name" v-model="name_text"/>

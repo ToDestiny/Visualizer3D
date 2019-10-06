@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-row justify-content-around align-items-center" style="height: 400px">
+    <div class="px-2 py-2 d-flex flex-row justify-content-around align-items-center" style="height: 400px">
         <div @click="onSaveFile" class="d-flex flex-column align-items-center">
             <font-awesome-icon style="font-size: 4em;" icon="save"/>
             <p>Download</p>

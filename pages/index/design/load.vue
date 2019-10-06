@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-column justify-content-center align-items-center" style="height: 400px" id="dz" @drop="onDrop" @dragover="onDragHandler">
+    <div class="px-2 py-2 d-flex flex-column justify-content-center align-items-center" style="height: 400px" id="dz" @drop="onDrop" @dragover="onDragHandler">
         <font-awesome-icon style="font-size: 4em;" icon="upload" @click="clickOnTmpFile"/>
         <p>Upload your model configuration</p>
         <input @change="newTmpFile" type="file" ref="tmpFile" style="display: none;" />

@@ -26,11 +26,13 @@
                 <nuxt-link class="tab-label" to="/save">Save</nuxt-link>
             </div>
         </div>
-        <div class="d-flex flex-row align-items-center justify-content-around center-container">
+        <div class="center-container">
+        <div class="d-flex flex-row flex-wrap-reverse align-items-center justify-content-around">
             <div class="config-container">
                 <nuxt-child :renderer="renderer"/>
             </div>
             <div class="renderer-container" ref="rendererContainer"/>
+        </div>
         </div>
     </section>
 </template>
@@ -129,15 +131,22 @@ a, a:hover {
             rgba(0, 0, 0, 0.4),
             rgba(0, 0, 0, 0)
         ) 1 100% / 0 10px 0 0;
+    z-index: 1
 }
 .center-container {
     position: fixed;
     left: 18vw;
     top: 0;
-    width: 80vw;
+    width: 82vw;
     height: 100%;
+    overflow-y: auto;
+}
+.center-container > div {
+    min-height: 100%;
 }
 .config-container, .renderer-container {
+    margin-top: 1em;
+    margin-bottom: 1em;
     background: white;
     border-radius: 10px;
     border-style: solid;
@@ -146,15 +155,15 @@ a, a:hover {
     box-sizing: content-box;
 }
 .config-container {
-    min-width: 550px;
+    min-width: 450px;
     max-width: 600px;
     min-height: 400px;
     max-height: 700px;
     overflow: scroll;
 }
 .renderer-container {
-    width: 800;
-    height: 800px;
+    width: 700px;
+    height: 700px;
 }
 .renderer-container > canvas {
     margin: 0

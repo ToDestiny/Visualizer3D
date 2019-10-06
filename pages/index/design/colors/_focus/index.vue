@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-row">
+    <div class="px-2 py-2 d-flex flex-row">
     <div class="d-flex flex-column justify-content-center">
         <div class="my-1 d-flex flex-row justify-content-start align-content-center" v-for="(color_column, col_index) in color_table" :key="col_index">
             <div class="mx-1" v-for="(color, row_index) in color_column" :key="row_index">

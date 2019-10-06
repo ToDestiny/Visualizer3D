@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-row justify-content-start flex-wrap" v-if="templates">
+    <div class="px-2 py-2 d-flex flex-row justify-content-start flex-wrap" v-if="templates">
         <div class="templ-container mx-0" v-for="(templ_info, index) in templates" :key="index">
             <input class="hidden-radio template-radio" type="radio" :id="templ_info.name" :value="index" v-model="template_selection">
             <label class="templ-thumb-container" :for="templ_info.name">

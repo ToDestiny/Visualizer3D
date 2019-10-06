@@ -1,5 +1,5 @@
 <template>
-    <div class="px-3 py-3 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
+    <div class="px-2 py-2 d-flex flex-row justify-content-start flex-wrap" id="dz" @drop="onDrop" @dragover="onDragHandler">
         <div class="d-flex flex-column align-items-center">
             <font-awesome-icon style="font-size: 4em;" icon="plus-square" @click="clickOnTmpFile"/>
             <p>Drag your logos here</p>
