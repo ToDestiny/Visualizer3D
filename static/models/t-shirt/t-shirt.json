@@ -1,6 +1,6 @@
 {
     "name": "t-shirt",
-    "version": "0.04",
+    "version": "0.0.4",
     "parts": [
         {
             "name": "front",
