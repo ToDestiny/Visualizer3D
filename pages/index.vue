@@ -4,7 +4,7 @@
             Visualizer
         </h1-->
         <div class="sidebar">
-            <img src="/mythlogo.svg" class="myth-logo">
+            <img src="/mythlogo_dark.svg" class="myth-logo">
             <div class="d-flex flex-column align-items-start">
                 <!-- tabs -->
                 <nuxt-link class="tab-label" to="/design">Design</nuxt-link>
@@ -48,7 +48,7 @@
 }
 .myth-logo {
     margin: 0 0 20px 20px;
-    max-width: 200px;
+    max-width: 70%;
 }
 .container {
     position: fixed;
@@ -116,7 +116,8 @@ a, a:hover {
     position: fixed;
     top: 0;
     left: 0;
-    width: 300px;
+    width: 18vw;
+    min-width: 260px;
     height: 100%;
     padding-top: 50px;
     padding-left: 30px;
@@ -131,7 +132,7 @@ a, a:hover {
 }
 .center-container {
     position: fixed;
-    left: 20vw;
+    left: 18vw;
     top: 0;
     width: 80vw;
     height: 100%;
@@ -152,8 +153,8 @@ a, a:hover {
     overflow: scroll;
 }
 .renderer-container {
-    width: 650px;
-    height: 650px;
+    width: 800;
+    height: 800px;
 }
 .renderer-container > canvas {
     margin: 0

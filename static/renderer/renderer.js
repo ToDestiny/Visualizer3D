@@ -85,8 +85,8 @@ export default class Renderer extends Observable {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 650 // window.innerWidth
-        this.height = 650 // window.innerHeight
+        this.width = 800 // window.innerWidth
+        this.height = 800 // window.innerHeight
         this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
