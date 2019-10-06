@@ -152,8 +152,11 @@ a, a:hover {
     overflow: scroll;
 }
 .renderer-container {
-    min-width: 600px;
-    min-height: 600px;
+    width: 650px;
+    height: 650px;
+}
+.renderer-container > canvas {
+    margin: 0
 }
 .color-radio:checked + .color-label {
     background: rgba(0, 0, 0, 0.2)

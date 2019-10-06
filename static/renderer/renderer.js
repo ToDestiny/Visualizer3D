@@ -85,8 +85,8 @@ export default class Renderer extends Observable {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 600 // window.innerWidth
-        this.height = 600 // window.innerHeight
+        this.width = 650 // window.innerWidth
+        this.height = 650 // window.innerHeight
         this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
@@ -115,6 +115,7 @@ export default class Renderer extends Observable {
         material.color = new NODES.TextureNode(canvas_texture)
         material.roughness = new NODES.FloatNode(1)
         material.metalness = new NODES.FloatNode(0)
+        material.side = THREE.DoubleSide
         if (part_info.normal_map) {
             let intensity = 1
             let normal_texture = new THREE.TextureLoader().load(part_info.normal_map)
