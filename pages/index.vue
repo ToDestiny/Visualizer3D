@@ -152,21 +152,21 @@ a, a:hover {
     overflow: scroll;
 }
 .renderer-container {
-    min-width: 550px;
-    min-height: 550px;
+    min-width: 600px;
+    min-height: 600px;
 }
 .color-radio:checked + .color-label {
     background: rgba(0, 0, 0, 0.2)
 }
 .color-label {
     border-radius: 10px;
-    padding: 5px 2px;
+    padding: 4px 2px;
     display: inline-block;
     line-height: 0;
     margin: 0;
 }
 .color-box {
-    width: 60px;
+    width: 50px;
     height: 30px;
     display: inline-block;
     line-height: 0;

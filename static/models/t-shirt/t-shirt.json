@@ -1,41 +1,41 @@
 {
     "name": "t-shirt",
-    "version": "0.02",
+    "version": "0.03",
     "parts": [
         {
             "name": "front",
             "nice_name": "Front",
             "obj_file": "front.obj",
             "color_map": null,
-            "normal_map": null
+            "normal_map": "normal.png"
         },
         {
             "name": "back",
             "nice_name": "Back",
             "obj_file": "back.obj",
             "color_map": null,
-            "normal_map": null
+            "normal_map": "normal.png"
         },
         {
             "name": "sleeve_left",
             "nice_name": "Left sleeve",
             "obj_file": "sleeve_left.obj",
             "color_map": null,
-            "normal_map": null
+            "normal_map": "normal.png"
         },
         {
             "name": "sleeve_right",
             "nice_name": "Right sleeve",
             "obj_file": "sleeve_right.obj",
             "color_map": null,
-             "normal_map": null
+             "normal_map": "normal.png"
         },
         {
             "name": "collar",
             "nice_name": "Collar",
             "obj_file": "collar.obj",
             "color_map": null,
-             "normal_map": null
+             "normal_map": "normal.png"
         }
     ],
     "fixed_logos": [
@@ -47,7 +47,7 @@
             "center_x": 850
         },
         {
-            "url": "/sticker.svg",
+            "url": "/mythsticker.svg",
             "part": "front",
             "width": 100,
             "center_y": 1800,

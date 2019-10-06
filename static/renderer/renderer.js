@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { OBJLoader2 } from 'three/examples/jsm/loaders/OBJLoader2.js'
+import * as NODES from 'three/examples/jsm/nodes/Nodes.js'
 import { to_radians } from "./util.js"
 import * as UvCanvas from "./uv_canvas.js"
 import { TextRect } from './canvas_shapes/text.js';
@@ -23,6 +24,7 @@ export default class Renderer extends Observable {
         model["url"] = model_url
         model.parts.forEach((part) => {
             part.obj_file = model_path + part.obj_file
+            part.normal_map = part.normal_map ? model_path + part.normal_map : undefined
         })
         model.templates.forEach((templ) => {
             templ.thumb_url = model_path + templ.thumb_url
@@ -53,7 +55,7 @@ export default class Renderer extends Observable {
             this.width/this.height, 0.1, 9999)
         camera.position.copy(new THREE.Vector3(0.5, 0.5, 3))
         const controls = new OrbitControls(camera, renderer.domElement)
-        controls.minDistance = 1.8
+        controls.minDistance = 1.5
         controls.maxDistance = 2.5
         controls.maxPolarAngle = to_radians(90 + 20)
         controls.minPolarAngle = to_radians(90 - 20)
@@ -83,8 +85,8 @@ export default class Renderer extends Observable {
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 550 // window.innerWidth
-        this.height = 550 // window.innerHeight
+        this.width = 600 // window.innerWidth
+        this.height = 600 // window.innerHeight
         this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")
@@ -108,11 +110,26 @@ export default class Renderer extends Observable {
         let canvas = new UvCanvas.Canvas("canvas_" + index, {width: 2048, height: 2048})
         let canvas_texture = new THREE.Texture(canvas.canvas_element)
         this.setupCanvas(canvas, canvas_texture, part_info.color_map)
-        let material = new THREE.MeshPhongMaterial({color: 0xffffff,
-            map: canvas_texture,
-            /* TODO normal map */
-            shininess: 15,
-            side: THREE.DoubleSide})
+        // set up node material
+        let material = new NODES.StandardNodeMaterial()
+        material.color = new NODES.TextureNode(canvas_texture)
+        material.roughness = new NODES.FloatNode(1)
+        material.metalness = new NODES.FloatNode(0)
+        if (part_info.normal_map) {
+            let intensity = 2
+            let scale = 70
+            let normal_texture = new THREE.TextureLoader().load(part_info.normal_map)
+            normal_texture.wrapS = normal_texture.wrapT = THREE.RepeatWrapping
+            let normal_uv = new NODES.UVNode()
+            normal_uv = new NODES.OperatorNode(
+                normal_uv,
+                new NODES.FloatNode(scale),
+                NODES.OperatorNode.MUL
+            )
+            material.normal = new NODES.NormalMapNode(
+                new NODES.TextureNode(normal_texture, normal_uv), 
+                new NODES.Vector2Node(intensity, intensity))
+        }
         let mesh
         part.scale.multiplyScalar(factor)
         part.position.add(new THREE.Vector3(0, -0.8, 0))
