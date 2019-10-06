@@ -116,14 +116,13 @@ export default class Renderer extends Observable {
         material.roughness = new NODES.FloatNode(1)
         material.metalness = new NODES.FloatNode(0)
         if (part_info.normal_map) {
-            let intensity = 2
-            let scale = 70
+            let intensity = 1
             let normal_texture = new THREE.TextureLoader().load(part_info.normal_map)
             normal_texture.wrapS = normal_texture.wrapT = THREE.RepeatWrapping
             let normal_uv = new NODES.UVNode()
             normal_uv = new NODES.OperatorNode(
                 normal_uv,
-                new NODES.FloatNode(scale),
+                new NODES.FloatNode(part_info.normal_scale),
                 NODES.OperatorNode.MUL
             )
             material.normal = new NODES.NormalMapNode(

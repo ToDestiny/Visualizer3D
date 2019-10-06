@@ -1,41 +1,46 @@
 {
     "name": "t-shirt",
-    "version": "0.03",
+    "version": "0.04",
     "parts": [
         {
             "name": "front",
             "nice_name": "Front",
             "obj_file": "front.obj",
             "color_map": null,
-            "normal_map": "normal.png"
+            "normal_map": "normal.png",
+            "normal_scale": 70
         },
         {
             "name": "back",
             "nice_name": "Back",
             "obj_file": "back.obj",
             "color_map": null,
-            "normal_map": "normal.png"
+            "normal_map": "normal.png",
+            "normal_scale": 70
         },
         {
             "name": "sleeve_left",
             "nice_name": "Left sleeve",
             "obj_file": "sleeve_left.obj",
             "color_map": null,
-            "normal_map": "normal.png"
+            "normal_map": "normal.png",
+            "normal_scale": 40
         },
         {
             "name": "sleeve_right",
             "nice_name": "Right sleeve",
             "obj_file": "sleeve_right.obj",
             "color_map": null,
-             "normal_map": "normal.png"
+            "normal_map": "normal.png",
+            "normal_scale": 40
         },
         {
             "name": "collar",
             "nice_name": "Collar",
             "obj_file": "collar.obj",
             "color_map": null,
-             "normal_map": "normal.png"
+            "normal_map": "normal.png",
+            "normal_scale": 15
         }
     ],
     "fixed_logos": [
