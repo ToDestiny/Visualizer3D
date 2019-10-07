@@ -81,13 +81,22 @@ export default class Renderer extends Observable {
         scene.add(this.point_light1)
         this.renderLoop()
     }
+    get width() {
+        return this.container.clientWidth
+    }
+    get height() {
+        return this.container.clientHeight
+    }
+    resetSize() {
+        console.log("new size!")
+        this.renderer.setSize(this.width, this.height)
+        this.camera.aspect = this.width / this.height
+    }
     constructor(container) {
         super()
         this.container = container
         this.rotation_y = 0
         this.rotation_x = 0
-        this.width = 700 // window.innerWidth
-        this.height = 700 // window.innerHeight
         this.view_angle = 65
         this.initThree()
         var bebas_font = new FontFace("Bebas Neue", "url('" + "/fonts/BebasNeue-Regular.woff2" + "')")

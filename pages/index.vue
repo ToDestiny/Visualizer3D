@@ -155,15 +155,16 @@ a, a:hover {
     box-sizing: content-box;
 }
 .config-container {
-    min-width: 450px;
-    max-width: 600px;
-    min-height: 400px;
-    max-height: 700px;
+    min-width: 100px;
+    width: 25vw;
+    height: 70vh;
     overflow: scroll;
 }
 .renderer-container {
-    width: 700px;
-    height: 700px;
+    min-width: 400px;
+    min-height: 400px;
+    width: 45vw;
+    height: 45vw;
 }
 .renderer-container > canvas {
     margin: 0
@@ -173,7 +174,7 @@ a, a:hover {
 }
 .color-label {
     border-radius: 10px;
-    padding: 4px 2px;
+    padding: 3px 0;
     display: inline-block;
     line-height: 0;
     margin: 0;
