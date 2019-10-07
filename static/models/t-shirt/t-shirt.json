@@ -7,40 +7,40 @@
             "nice_name": "Front",
             "obj_file": "front.obj",
             "color_map": null,
-            "normal_map": "normal.png",
-            "normal_scale": 70
+            "bump_map": "bump.png",
+            "normal_scale": 140
         },
         {
             "name": "back",
             "nice_name": "Back",
             "obj_file": "back.obj",
             "color_map": null,
-            "normal_map": "normal.png",
-            "normal_scale": 70
+            "bump_map": "bump.png",
+            "normal_scale": 140
         },
         {
             "name": "sleeve_left",
             "nice_name": "Left sleeve",
             "obj_file": "sleeve_left.obj",
             "color_map": null,
-            "normal_map": "normal.png",
-            "normal_scale": 40
+            "bump_map": "bump.png",
+            "normal_scale": 80
         },
         {
             "name": "sleeve_right",
             "nice_name": "Right sleeve",
             "obj_file": "sleeve_right.obj",
             "color_map": null,
-            "normal_map": "normal.png",
-            "normal_scale": 40
+            "bump_map": "bump.png",
+            "normal_scale": 80
         },
         {
             "name": "collar",
             "nice_name": "Collar",
             "obj_file": "collar.obj",
             "color_map": null,
-            "normal_map": "normal.png",
-            "normal_scale": 15
+            "bump_map": "bump.png",
+            "normal_scale": 30
         }
     ],
     "fixed_logos": [

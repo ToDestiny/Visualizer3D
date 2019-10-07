@@ -25,6 +25,7 @@ export default class Renderer extends Observable {
         model.parts.forEach((part) => {
             part.obj_file = model_path + part.obj_file
             part.normal_map = part.normal_map ? model_path + part.normal_map : undefined
+            part.bump_map = part.bump_map ? model_path + part.bump_map : undefined
         })
         model.templates.forEach((templ) => {
             templ.thumb_url = model_path + templ.thumb_url
@@ -113,22 +114,25 @@ export default class Renderer extends Observable {
         // set up node material
         let material = new NODES.StandardNodeMaterial()
         material.color = new NODES.TextureNode(canvas_texture)
-        material.roughness = new NODES.FloatNode(1)
+        material.roughness = new NODES.FloatNode(0.8)
         material.metalness = new NODES.FloatNode(0)
         material.side = THREE.DoubleSide
-        if (part_info.normal_map) {
-            let intensity = 1
-            let normal_texture = new THREE.TextureLoader().load(part_info.normal_map)
-            normal_texture.wrapS = normal_texture.wrapT = THREE.RepeatWrapping
-            let normal_uv = new NODES.UVNode()
-            normal_uv = new NODES.OperatorNode(
-                normal_uv,
+        if (part_info.normal_map || part_info.bump_map) {
+            let intensity = 0.0005
+            let map_file = part_info.normal_map ? part_info.normal_map : part_info.bump_map
+            let map_texture = new THREE.TextureLoader().load(map_file)
+            map_texture.wrapS = map_texture.wrapT = THREE.RepeatWrapping
+            let scaled_uv = new NODES.OperatorNode(
+                new NODES.UVNode(),
                 new NODES.FloatNode(part_info.normal_scale),
                 NODES.OperatorNode.MUL
             )
-            material.normal = new NODES.NormalMapNode(
-                new NODES.TextureNode(normal_texture, normal_uv), 
-                new NODES.Vector2Node(intensity, intensity))
+            let texture_node = new NODES.TextureNode(map_texture, scaled_uv)
+            if (part_info.normal_map)
+                material.normal = new NODES.NormalMapNode(texture_node)
+            else
+                material.normal = new NODES.BumpMapNode(texture_node)
+            material.normal.scale = new NODES.FloatNode(intensity)
         }
         let mesh
         part.scale.multiplyScalar(factor)
