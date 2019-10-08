@@ -5,7 +5,7 @@ export default class Observable {
     fire(event_name, options) {
         if (this._event_listeners[event_name]) {
             Object.keys(this._event_listeners[event_name]).forEach((key) => {
-                this._event_listeners[event_name][key].handler(this, event_name, options || {})
+                this._event_listeners[event_name][key].handler.bind(this)(event_name, options || {})
                 if (this._event_listeners[event_name][key].autoremove)
                     delete this._event_listeners[event_name][key]
             })

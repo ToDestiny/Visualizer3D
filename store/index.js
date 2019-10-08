@@ -14,7 +14,8 @@ export const state = () => ({
     template_selection: null,
     colors: [],
     logos: {},
-    text_slots: {}
+    text_slots: {},
+    user_token: ""
 })
 
 export const mutations = {
@@ -43,6 +44,9 @@ export const mutations = {
     set_text_slots(state, text_slots) {
         state.text_slots = text_slots
     },
+    set_user_token(state, token) {
+        state.user_token = token
+    }
 }
 
 export const actions = {
@@ -102,5 +106,8 @@ export const actions = {
         context.commit("set_template", { index: loaded.template_index, colors: loaded.colors })
         loaded.logos.forEach((logo) => context.commit("set_logo", logo))
         context.commit("set_text_slots", loaded.text_slots)
+    },
+    set_user_token(context, token) {
+        context.commit("set_user_token", token)
     }
 }

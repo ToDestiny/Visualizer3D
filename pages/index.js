@@ -1,4 +1,5 @@
 import Renderer from 'static/renderer/renderer.js'
+import axios from 'axios'
 import { mapState } from 'vuex';
 
 export default {
@@ -31,6 +32,12 @@ export default {
     mounted() {
         this.renderer = new Renderer(this.$refs.rendererContainer)
         this.$store.dispatch('initialize', { renderer: this.renderer, model_url: '/models/t-shirt/t-shirt.json' })
+        axios.post("https://dev-api.myth.gg/api/auth/login", {
+            email: "alexamadori592@gmail.com",
+            password: "jamashinaide"
+        })
+        .then((response) => this.$store.dispatch("set_user_token", response.data.user.token))
+        .catch((error) => console.error(error))
         window.addEventListener('resize', this.on_resize)
     },
     beforeDestroy() {
