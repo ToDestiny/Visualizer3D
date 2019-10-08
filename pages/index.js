@@ -36,7 +36,10 @@ export default {
             email: "alexamadori592@gmail.com",
             password: "jamashinaide"
         })
-        .then((response) => this.$store.dispatch("set_user_token", response.data.user.token))
+        .then((response) => {
+            console.log(response)
+            return this.$store.dispatch("set_user_token", response.data.user.token)
+        })
         .catch((error) => console.error(error))
         window.addEventListener('resize', this.on_resize)
     },

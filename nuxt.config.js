@@ -60,5 +60,10 @@ export default {
     */
     extend(config, ctx) {
     },
+  },
+
+  server: {
+    port: 3000,
+    host: "editor.myth.gg"
   }
 }

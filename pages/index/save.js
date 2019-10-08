@@ -63,27 +63,28 @@ export default {
                 downloadBlob(blob, "preview.jpg")
             })
         },
-        onUploadFile() {
-            let upload_data = []
+        async onUploadFile() {
             let options = {
-                'Authorization': `Bearer ${this.$store.state.user_token}`,
-                'Content-Type': 'multipart/form-data'
+                headers: {
+                    'Authorization': `Bearer ${this.$store.state.user_token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
             }
-            upload_data.push(make_zip(this.renderer))
-            upload_data.push(new Promise((resolve, reject) => get_screenshot(this.renderer, resolve, reject)))
-            Promise.all(upload_data)
-            .then(([zip, img]) => {
-                let form_data = new FormData()
-                form_data.append("zip", zip)
-                return Promise.all([axios.post("https://dev-api.myth.gg/api/statics/editor/zip", form_data, options), img])
-            })
-            .then(([response, img]) => {
-                let form_data = new FormData()
-                form_data.append("preview", img)
-                return axios.post("https://dev-api.myth.gg/api/statics/editor/preview", form_data, options)
-            })
-            .then((response) => console.log(response))
-            .catch((error) => console.error(error))
+            let zip = await make_zip(this.renderer)
+            let img = await new Promise((resolve, reject) => get_screenshot(this.renderer, resolve, reject))
+            try {
+                let zip_form_data = new FormData()
+                zip_form_data.append("zip", zip)
+                let zip_response = await axios.post("https://dev-api.myth.gg/statics/editor/zip", zip_form_data, options)
+                console.log(zip_response)
+                let img_form_data = new FormData()
+                img_form_data.append("preview", img)
+                let img_response = await axios.post(`https://dev-api.myth.gg/statics/editor/${zip_response.data._id}/preview`, img_form_data, options)
+                console.log(img_response)
+            }
+            catch (error) {
+                console.error(error)
+            }
         }
     }
 }
