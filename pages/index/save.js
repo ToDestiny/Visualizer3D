@@ -65,8 +65,9 @@ export default {
         },
         async onUploadFile() {
             let options = {
+                withCredentials: true,
                 headers: {
-                    'Authorization': `Bearer ${this.$store.state.user_token}`,
+                    //'Authorization': `Bearer ${this.$store.state.user_token}`,
                     'Content-Type': 'multipart/form-data'
                 }
             }
@@ -81,6 +82,7 @@ export default {
                 img_form_data.append("preview", img)
                 let img_response = await axios.post(`https://dev-api.myth.gg/statics/editor/${zip_response.data._id}/preview`, img_form_data, options)
                 console.log(img_response)
+                window.location.replace("https://dev-board.myth.gg/dashboard")
             }
             catch (error) {
                 console.error(error)

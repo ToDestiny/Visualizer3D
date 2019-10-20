@@ -63,7 +63,7 @@ export default {
   },
 
   server: {
-    port: 3000,
+    port: 80,
     host: "editor.myth.gg"
   }
 }

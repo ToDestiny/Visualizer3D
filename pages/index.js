@@ -32,15 +32,14 @@ export default {
     mounted() {
         this.renderer = new Renderer(this.$refs.rendererContainer)
         this.$store.dispatch('initialize', { renderer: this.renderer, model_url: '/models/t-shirt/t-shirt.json' })
-        axios.post("https://dev-api.myth.gg/api/auth/login", {
-            email: "alexamadori592@gmail.com",
-            password: "jamashinaide"
-        })
+        /*axios.post("https://dev-api.myth.gg/api/auth/login", { withCredentials: true })
         .then((response) => {
             console.log(response)
             return this.$store.dispatch("set_user_token", response.data.user.token)
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+            throw error 
+        })*/
         window.addEventListener('resize', this.on_resize)
     },
     beforeDestroy() {
