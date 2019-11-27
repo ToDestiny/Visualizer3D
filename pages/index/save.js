@@ -1,7 +1,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faSave } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import * as JSZip from "jszip"
+import { make_zip } from '../../static/ziptoconfig'
 import axios from "axios"
 
 library.add(faSave)
@@ -30,20 +30,6 @@ function get_screenshot(renderer, resolve, reject) {
         renderer.resetCamera()
         renderer.on("after:render", render_screenshot, true)
     }, true)
-}
-
-function make_zip(renderer) {
-    let model_config = JSON.stringify(renderer.getConfig())
-    model_config = new Blob([model_config])
-    let zip = new JSZip()
-    zip.file("model_config.json", model_config)
-    return zip.generateAsync({
-        type: "blob",
-        compression: "DEFLATE",
-        ompressionOptions: {
-            level: 9
-        }
-    })
 }
 
 export default {
@@ -82,7 +68,7 @@ export default {
                 img_form_data.append("preview", img)
                 let img_response = await axios.post(`https://dev-api.myth.gg/statics/editor/${zip_response.data._id}/preview`, img_form_data, options)
                 console.log(img_response)
-                window.location.replace("https://dev-board.myth.gg/dashboard")
+                window.location.replace("https://board.myth.gg/dashboard")
             }
             catch (error) {
                 console.error(error)

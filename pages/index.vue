@@ -161,8 +161,8 @@ a, a:hover {
     overflow: scroll;
 }
 .renderer-container {
-    min-width: 400px;
-    min-height: 400px;
+    min-width: 500px;
+    min-height: 500px;
     width: 45vw;
     height: 45vw;
 }

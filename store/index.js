@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import Renderer from '../static/renderer/renderer';
+import Renderer from '../static/renderer/renderer'
+import { load_zipped } from '../static/ziptoconfig'
+import axios from 'axios'
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -52,6 +54,11 @@ export const mutations = {
 export const actions = {
     async initialize(context, payload) {
         await context.dispatch('load_model', payload)
+        if ('load_id' in payload) {
+            let url = window.atob(payload['load_id'])
+            await axios.get(url, { responseType: 'blob' })
+                .then((response) => load_zipped(context, payload.renderer, response.data))
+        }
         context.commit('initialize')
     },
     async load_model(context, { renderer, model_url }) {

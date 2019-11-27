@@ -47,14 +47,13 @@ export default class Renderer extends Observable {
             antialias: true,
             preserveDrawingBuffer: true
         })
-        renderer.setClearColor(0xFCFCFC)
         this.container.appendChild(renderer.domElement)
         renderer.setSize(this.width, this.height)
         renderer.setClearColor(0xffffff, 1)
 
         const camera = new THREE.PerspectiveCamera(this.view_angle,
             this.width/this.height, 0.1, 9999)
-        camera.position.copy(new THREE.Vector3(0.5, 0.5, 3))
+        camera.position.copy(new THREE.Vector3(0, 0.7, 2.5))
         const controls = new OrbitControls(camera, renderer.domElement)
         controls.minDistance = 1.5
         controls.maxDistance = 2.5
@@ -144,16 +143,14 @@ export default class Renderer extends Observable {
         }
         let mesh
         part.scale.multiplyScalar(factor)
-        part.position.add(new THREE.Vector3(0, -0.8, 0))
+        part.position.add(new THREE.Vector3(0, -1.0, 0))
         part.traverse((child) => {
             if (child instanceof THREE.Mesh) {
                 mesh = child
                 child.name = name
                 child.material = material
-                child.position.add(new THREE.Vector3(0, -5, 0))
             }
         })
-        //part.position.y = -0.25
         this.parts[index] = {
             obj: part,
             mesh: mesh,

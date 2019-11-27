@@ -10,7 +10,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUpload } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import * as JSZip from "jszip"
+import { load_zipped } from "../../../static/ziptoconfig"
 
 library.add(faUpload)
 
@@ -25,13 +25,7 @@ export default {
             let file = files[0]
             let reader = new FileReader()
             reader.onload = (e) => {
-                let zip = new JSZip()
-                zip.loadAsync(e.target.result)
-                    .then((zip) => zip.file("model_config.json").async("string"))
-                    .then((config) => {
-                        let model = JSON.parse(config)
-                        this.$store.dispatch("load_config", { renderer: this.renderer, model })
-                    })
+                load_zipped(this.$store, this.renderer, e.target.result)
             }
             reader.readAsBinaryString(file)
         },
