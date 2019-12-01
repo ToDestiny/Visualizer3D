@@ -1,6 +1,8 @@
 import Renderer from 'static/renderer/renderer.js'
 import axios from 'axios'
 import { mapState } from 'vuex';
+import { cid } from '../static/uuid'
+import { link_file } from '../static/upload'
 
 export default {
     name: 'App',
@@ -30,12 +32,19 @@ export default {
         }
     },
     mounted() {
+        window.addEventListener('resize', this.on_resize)
+        // Renderer and model setup
         this.renderer = new Renderer(this.$refs.rendererContainer)
         let payload = { renderer: this.renderer, model_url: '/models/t-shirt/t-shirt.json' }
         if ('load_id' in this.$route.query)
             payload['load_id'] = this.$route.query['load_id']
         this.$store.dispatch('initialize', payload)
-        window.addEventListener('resize', this.on_resize)
+        // cid setup
+        let q_cid
+        if ('cid' in this.$route.query)
+            this.$store.dispatch('set_cid', this.$route.query['cid'])
+        else
+            this.$store.dispatch('set_cid', cid())
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.on_resize)
