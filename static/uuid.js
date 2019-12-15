@@ -6,7 +6,7 @@ export function uuidv4() {
 }
 
 export function cid() {
-    return 'xxxxxxxxxxxx'.replace(/[x]/g, function(c) {
+    return 'xxxxxxxxxxxxxxxxxxxxxxxx'.replace(/[x]/g, function(c) {
         var v = Math.random() * 16 | 0;
         return v.toString(16);
     });
