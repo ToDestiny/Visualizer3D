@@ -27,6 +27,12 @@ export function get_screenshot(renderer, resolve, reject) {
     }, true)
 }
 
+function is_logged_in() {
+    let token_name = 'token'
+    let reg = new RegExp('^(?:.*;)?\s*' + token_name + '\s*=\s*([^;]+)(?:.*)?$')
+    return document.cookie.match(reg)
+}
+
 export async function upload_file(renderer, q_cid) {
     let upload_options = {
         headers: {
@@ -38,25 +44,23 @@ export async function upload_file(renderer, q_cid) {
     try {
         let access_token = await axios.get(`https://api.myth.gg/api/guest/access/upload?cid=${q_cid}`)
             .then((response) => response['accessToken'])
-        let zip_form_data = new FormData()
-        zip_form_data.append("zip", zip_data)
-        await axios.post(`https://api-storage.myth.gg/file?usage=editor&folder=${q_cid}&token=${access_token}`, zip_form_data, upload_options)
-        let img_form_data = new FormData()
-        img_form_data.append("preview", img_data)
-        await axios.post(`https://api-storage.myth.gg/file/image?usage=editor&folder=${q_cid}&token=${access_token}`, img_form_data, upload_options)
+        let zip_form = new FormData()
+        zip_form.append('zip', zip_data)
+        await axios.post(`https://api-storage.myth.gg/file?usage=editor&folder=${q_cid}&token=${access_token}`, zip_form, upload_options)
+        let img_form = new FormData()
+        img_form.append("preview", img_data)
+        await axios.post(`https://api-storage.myth.gg/file/image?usage=editor&folder=${q_cid}&token=${access_token}`, img_form, upload_options)
+        redirect(q_cid)
     }
     catch (error) {
         console.error(error)
+        alert('Upload failed')
     }
-    redirect(q_cid)
 }
 
-export function link_or_redirect(q_cid) {
-    let token_name = 'token'
-    let reg = new RegExp('^(?:.*;)?\s*' + token_name + '\s*=\s*([^;]+)(?:.*)?$')
-    // if cookie "token" is present
-    if (document.cookie.match(reg))
-        window.location.assign("https://board.myth.gg/dashboard")
+export function redirect(q_cid) {
+    if (is_logged_in())
+        window.location.assign('https://board.myth.gg/editor')
     else
         window.location.assign(`https://board.myth.gg/register?cid=${q_cid}`)
 }
